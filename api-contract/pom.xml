@@ -9,7 +9,8 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>data-access</artifactId>
+    <artifactId>api-contract</artifactId>
+
     <dependencies>
         <dependency>
             <groupId>com.hamze.banking.system</groupId>

@@ -9,11 +9,20 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>data-access</artifactId>
+    <artifactId>core</artifactId>
+
     <dependencies>
         <dependency>
             <groupId>com.hamze.banking.system</groupId>
             <artifactId>shared</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hamze.banking.system</groupId>
+            <artifactId>core-contract</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hamze.banking.system</groupId>
+            <artifactId>data-access</artifactId>
         </dependency>
     </dependencies>
 

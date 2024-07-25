@@ -28,13 +28,14 @@
     </properties>
 
     <modules>
-        <module>exposed-service-api</module>
-        <module>common</module>
+        <module>api-contract</module>
+        <module>shared</module>
         <module>data-access</module>
-        <module>exposed-service</module>
-        <module>container</module>
-        <module>service</module>
-        <module>service-api</module>
+        <module>api</module>
+        <module>application</module>
+        <module>core</module>
+        <module>core-contract</module>
+        <module>security</module>
     </modules>
 
     <dependencyManagement>
@@ -42,7 +43,7 @@
             <!-- sub-systems -->
             <dependency>
                 <groupId>com.hamze.banking.system</groupId>
-                <artifactId>common</artifactId>
+                <artifactId>shared</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -52,22 +53,22 @@
             </dependency>
             <dependency>
                 <groupId>com.hamze.banking.system</groupId>
-                <artifactId>exposed-service-api</artifactId>
+                <artifactId>api-contract</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.hamze.banking.system</groupId>
-                <artifactId>exposed-service</artifactId>
+                <artifactId>api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.hamze.banking.system</groupId>
-                <artifactId>service</artifactId>
+                <artifactId>core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.hamze.banking.system</groupId>
-                <artifactId>service-api</artifactId>
+                <artifactId>core-contract</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- sub-systems -->
