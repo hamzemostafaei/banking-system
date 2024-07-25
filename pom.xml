@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.hamze.banking.system</groupId>
+    <artifactId>banking-system</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+
+    <properties>
+        <java.version>21</java.version>
+        <spring.boot.version>3.2.0</spring.boot.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
+        <blaze-persistence.version>1.6.10</blaze-persistence.version>
+        <org.projectlombok.version>1.18.30</org.projectlombok.version>
+        <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
+    </properties>
+
+    <modules>
+        <module>accounting</module>
+        <module>common</module>
+        <module>user-management</module>
+        <module>deposit</module>
+        <module>container</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- sub-systems -->
+            <dependency>
+                <groupId>com.hamze.banking.system</groupId>
+                <artifactId>common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hamze.banking.system</groupId>
+                <artifactId>user-management</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hamze.banking.system</groupId>
+                <artifactId>accounting</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hamze.banking.system</groupId>
+                <artifactId>deposit</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- sub-systems -->
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- Third Party Dependencies -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${org.projectlombok.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <!-- Third Party Dependencies -->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <release>${maven.compiler.source}</release>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${org.projectlombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${org.mapstruct.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.ferstl</groupId>
+                <artifactId>depgraph-maven-plugin</artifactId>
+                <version>4.0.3</version>
+                <configuration>
+                    <createImage>true</createImage>
+                    <reduceEdges>false</reduceEdges>
+                    <scope>compile</scope>
+                    <includes>com.hamze.banking.system*:*</includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
