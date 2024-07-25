@@ -60,6 +60,16 @@
                 <artifactId>exposed-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.hamze.banking.system</groupId>
+                <artifactId>service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hamze.banking.system</groupId>
+                <artifactId>service-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!-- sub-systems -->
         </dependencies>
     </dependencyManagement>

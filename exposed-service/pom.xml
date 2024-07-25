@@ -26,7 +26,11 @@
         </dependency>
         <dependency>
             <groupId>com.hamze.banking.system</groupId>
-            <artifactId>data-access</artifactId>
+            <artifactId>service-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hamze.banking.system</groupId>
+            <artifactId>service</artifactId>
         </dependency>
     </dependencies>
 

@@ -11,4 +11,11 @@
 
     <artifactId>service-api</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.hamze.banking.system</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>

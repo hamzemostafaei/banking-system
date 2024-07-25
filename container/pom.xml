@@ -38,6 +38,14 @@
             <groupId>com.hamze.banking.system</groupId>
             <artifactId>data-access</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.hamze.banking.system</groupId>
+            <artifactId>service</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hamze.banking.system</groupId>
+            <artifactId>service-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
