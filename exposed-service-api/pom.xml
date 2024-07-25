@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>deposit</artifactId>
+    <artifactId>exposed-service-api</artifactId>
 
     <dependencies>
         <dependency>
@@ -18,11 +18,7 @@
         </dependency>
         <dependency>
             <groupId>com.hamze.banking.system</groupId>
-            <artifactId>accounting</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hamze.banking.system</groupId>
-            <artifactId>user-management</artifactId>
+            <artifactId>data-access</artifactId>
         </dependency>
     </dependencies>
 

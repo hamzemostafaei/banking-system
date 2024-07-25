@@ -9,16 +9,11 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>accounting</artifactId>
-
+    <artifactId>data-access</artifactId>
     <dependencies>
         <dependency>
             <groupId>com.hamze.banking.system</groupId>
             <artifactId>common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hamze.banking.system</groupId>
-            <artifactId>user-management</artifactId>
         </dependency>
     </dependencies>
 
