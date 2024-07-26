@@ -34,4 +34,7 @@ public class DepositEdgeDTO {
 
     @JsonProperty("openAmount")
     private BigDecimal openAmount;
+
+    @JsonProperty("holder")
+    private CustomerEdgeDTO holder;
 }

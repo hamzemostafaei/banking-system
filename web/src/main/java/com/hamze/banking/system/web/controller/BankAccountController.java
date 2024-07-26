@@ -1,12 +1,15 @@
 package com.hamze.banking.system.web.controller;
 
 import com.hamze.banking.system.core.api.criteria.DepositCriteria;
+import com.hamze.banking.system.core.api.data.CustomerDTO;
 import com.hamze.banking.system.core.api.data.DepositDTO;
 import com.hamze.banking.system.core.api.exception.CoreServiceException;
+import com.hamze.banking.system.core.api.service.ICustomerService;
 import com.hamze.banking.system.core.api.service.IDepositService;
 import com.hamze.banking.system.shared.data.base.dto.ErrorDTO;
 import com.hamze.banking.system.shared.data.base.enumeration.ErrorCodeEnum;
 import com.hamze.banking.system.web.api.data.*;
+import com.hamze.banking.system.web.api.mapper.ICustomerDTOEdgeResponseMapper;
 import com.hamze.banking.system.web.api.mapper.IDepositDTOEdgeResponseMapper;
 import com.hamze.banking.system.web.api.validation.IGetDepositDetailsEdgeRequestValidator;
 import com.hamze.banking.system.web.api.validation.IOpenDepositEdgeRequestValidator;
@@ -28,9 +31,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class BankAccountController {
 
     private final IDepositService depositService;
+    private final ICustomerService customerService;
     private final IDepositDTOEdgeResponseMapper depositDTOEdgeResponseMapper;
     private final IGetDepositDetailsEdgeRequestValidator getDepositDetailsEdgeRequestValidator;
     private final IOpenDepositEdgeRequestValidator openDepositEdgeRequestValidator;
+    private final ICustomerDTOEdgeResponseMapper customerDTOEdgeResponseMapper;
 
     @PostMapping(path = "/v1/open")
     public ResponseEntity<OpenDepositEdgeResponseDTO> open(@RequestBody OpenDepositEdgeRequestDTO request) {
@@ -115,10 +120,15 @@ public class BankAccountController {
         DepositCriteria criteria = new DepositCriteria();
         criteria.setDepositNumberEquals(request.getDepositNumber());
 
-        DepositDTO serviceResponse = depositService.getSingleResult(criteria);
-        DepositEdgeDTO responseData = depositDTOEdgeResponseMapper.objectToEdgeObject(serviceResponse);
+        DepositDTO depositServiceResponse = depositService.getSingleResult(criteria);
 
-        response.setData(responseData);
+        if (depositServiceResponse != null) {
+            DepositEdgeDTO responseData = depositDTOEdgeResponseMapper.objectToEdgeObject(depositServiceResponse);
+            CustomerDTO holderCustomer = customerService.findById(depositServiceResponse.getCustomerNumber());
+            CustomerEdgeDTO customerEdge = customerDTOEdgeResponseMapper.objectToEdgeObject(holderCustomer);
+            responseData.setHolder(customerEdge);
+            response.setData(responseData);
+        }
 
         return ResponseEntity.ok(response);
     }

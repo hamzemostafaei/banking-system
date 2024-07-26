@@ -1,5 +1,6 @@
 package com.hamze.banking.system.web.controller;
 
+import com.hamze.banking.system.core.api.criteria.CustomerCriteria;
 import com.hamze.banking.system.core.api.data.CustomerDTO;
 import com.hamze.banking.system.core.api.exception.CoreServiceException;
 import com.hamze.banking.system.core.api.service.ICustomerService;
@@ -8,14 +9,12 @@ import com.hamze.banking.system.shared.data.base.enumeration.ErrorCodeEnum;
 import com.hamze.banking.system.web.api.data.CreateCustomerEdgeRequestDTO;
 import com.hamze.banking.system.web.api.data.CreateCustomerEdgeResponseDTO;
 import com.hamze.banking.system.web.api.data.CustomerEdgeDTO;
+import com.hamze.banking.system.web.api.data.GetCustomerEdgeResponseDTO;
 import com.hamze.banking.system.web.api.mapper.ICustomerDTOEdgeResponseMapper;
 import com.hamze.banking.system.web.api.validation.ICreateCustomerEdgeRequestValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -55,6 +54,21 @@ public class CustomerController {
             response.addError(new ErrorDTO(ErrorCodeEnum.InternalServiceError, "CreateCustomer"));
             return ResponseEntity.internalServerError().body(response);
         }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/v1/{customerNumber}")
+    public ResponseEntity<GetCustomerEdgeResponseDTO> getCustomer(@PathVariable("customerNumber") String customerNumber) {
+
+        GetCustomerEdgeResponseDTO response = new GetCustomerEdgeResponseDTO();
+
+        CustomerCriteria customerCriteria = new CustomerCriteria();
+        customerCriteria.setCustomerNumberEquals(customerNumber);
+
+        CustomerDTO serviceResponse = customerService.getSingleResult(customerCriteria);
+
+        response.setData(customerDTOEdgeResponseMapper.objectToEdgeObject(serviceResponse));
 
         return ResponseEntity.ok(response);
     }
