@@ -28,11 +28,11 @@
         </dependency>
         <dependency>
             <groupId>com.hamze.banking.system</groupId>
-            <artifactId>api-contract</artifactId>
+            <artifactId>web-api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.hamze.banking.system</groupId>
-            <artifactId>api</artifactId>
+            <artifactId>web</artifactId>
         </dependency>
         <dependency>
             <groupId>com.hamze.banking.system</groupId>
@@ -44,7 +44,7 @@
         </dependency>
         <dependency>
             <groupId>com.hamze.banking.system</groupId>
-            <artifactId>core-contract</artifactId>
+            <artifactId>core-api</artifactId>
         </dependency>
     </dependencies>
 

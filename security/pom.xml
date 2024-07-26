@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>com.hamze.banking.system</groupId>
-            <artifactId>core-contract</artifactId>
+            <artifactId>core-api</artifactId>
         </dependency>
     </dependencies>
 

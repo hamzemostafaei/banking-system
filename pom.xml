@@ -28,18 +28,131 @@
     </properties>
 
     <modules>
-        <module>api-contract</module>
+        <module>web-api</module>
         <module>shared</module>
         <module>data-access</module>
-        <module>api</module>
+        <module>web</module>
         <module>application</module>
         <module>core</module>
-        <module>core-contract</module>
+        <module>core-api</module>
         <module>security</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>io.projectreactor</groupId>
+                <artifactId>reactor-core</artifactId>
+                <version>3.6.8</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>1.5.5.Final</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- Start: blaze Dependencies -->
+            <dependency>
+                <groupId>com.querydsl</groupId>
+                <artifactId>querydsl-jpa</artifactId>
+                <classifier>jakarta</classifier>
+                <version>${querydsl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.querydsl</groupId>
+                <artifactId>querydsl-apt</artifactId>
+                <classifier>jakarta</classifier>
+                <version>${querydsl.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.blazebit</groupId>
+                <artifactId>blaze-persistence-core-api-jakarta</artifactId>
+                <version>${blaze-persistence.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.blazebit</groupId>
+                <artifactId>blaze-persistence-core-impl-jakarta</artifactId>
+                <version>${blaze-persistence.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.blazebit</groupId>
+                <artifactId>blaze-persistence-integration-querydsl-expressions-jakarta</artifactId>
+                <version>1.6.9</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.blazebit</groupId>
+                <artifactId>blaze-persistence-integration-hibernate-6.2</artifactId>
+                <version>${blaze-persistence.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <!-- End: blaze Dependencies -->
+            <!-- Start: Utility Dependencies -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-xml</artifactId>
+                <version>2.15.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-protobuf</artifactId>
+                <version>2.14.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.ulisesbocchio</groupId>
+                <artifactId>jasypt-spring-boot-starter</artifactId>
+                <version>3.0.5</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>3.1.8</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.13.0</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>1.9.4</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.15.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>5.2.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-pool2</artifactId>
+                <version>2.12.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ibm.icu</groupId>
+                <artifactId>icu4j</artifactId>
+                <version>74.1</version>
+            </dependency>
+            <dependency>
+                <groupId>io.hypersistence</groupId>
+                <artifactId>hypersistence-utils-hibernate-62</artifactId>
+                <version>3.6.1</version>
+            </dependency>
+            <!-- End: Utility Dependencies -->
             <!-- sub-systems -->
             <dependency>
                 <groupId>com.hamze.banking.system</groupId>
@@ -53,12 +166,12 @@
             </dependency>
             <dependency>
                 <groupId>com.hamze.banking.system</groupId>
-                <artifactId>api-contract</artifactId>
+                <artifactId>web-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.hamze.banking.system</groupId>
-                <artifactId>api</artifactId>
+                <artifactId>web</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -68,7 +181,7 @@
             </dependency>
             <dependency>
                 <groupId>com.hamze.banking.system</groupId>
-                <artifactId>core-contract</artifactId>
+                <artifactId>core-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- sub-systems -->

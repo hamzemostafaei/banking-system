@@ -15,11 +15,11 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>./log/pgsez.log</file>
+        <file>./log/banking_system.log</file>
         <rollingPolicy
                 class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>
-                ./log/archived/pgsez.%d{yyyy-MM-dd}.%i.log.zip
+                ./log/archived/banking_system.%d{yyyy-MM-dd}.%i.log.zip
             </fileNamePattern>
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>20</maxHistory>
@@ -32,11 +32,11 @@
     </appender>
 
     <appender name="CHANNEL_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>./log/channel/pgsez-channel1.log</file>
+        <file>./log/channel/banking_system-channel1.log</file>
         <rollingPolicy
                 class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>
-                ./log/channel/archived/pgsez-channel1.%d{yyyy-MM-dd}.%i.log.zip
+                ./log/channel/archived/banking_system-channel1.%d{yyyy-MM-dd}.%i.log.zip
             </fileNamePattern>
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>20</maxHistory>
@@ -49,11 +49,11 @@
     </appender>
 
     <appender name="DA_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>./log/da/pgsez-da1.log</file>
+        <file>./log/da/banking_system-da1.log</file>
         <rollingPolicy
                 class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>
-                ./log/da/archived/pgsez-da1.%d{yyyy-MM-dd}.%i.log.zip
+                ./log/da/archived/banking_system-da1.%d{yyyy-MM-dd}.%i.log.zip
             </fileNamePattern>
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>20</maxHistory>
@@ -65,25 +65,25 @@
         </encoder>
     </appender>
 
-    <logger name="com.hamze.bpms.exposed_service.logging" additivity="false">
+    <logger name="com.hamze.banking.system.exposed_service.logging" additivity="false">
         <level value="debug"/>
         <appender-ref ref="STDOUT"/>
 <!--        <appender-ref ref="FILE"/>-->
     </logger>
 
-    <logger name="com.hamze.bpms.exposed_service.channel" additivity="false">
+    <logger name="com.hamze.banking.system.exposed_service.channel" additivity="false">
         <level value="debug"/>
         <appender-ref ref="STDOUT"/>
 <!--        <appender-ref ref="CHANNEL_FILE"/>-->
     </logger>
 
-    <logger name="com.hamze.bpms.external_service.channel" additivity="false">
+    <logger name="com.hamze.banking.system.external_service.channel" additivity="false">
         <level value="debug"/>
         <appender-ref ref="STDOUT"/>
 <!--        <appender-ref ref="CHANNEL_FILE"/>-->
     </logger>
 
-    <logger name="com.hamze.bpms.service.external" additivity="false">
+    <logger name="com.hamze.banking.system.service.external" additivity="false">
         <level value="debug"/>
         <appender-ref ref="STDOUT"/>
 <!--        <appender-ref ref="FILE"/>-->
@@ -107,7 +107,7 @@
 <!--        <appender-ref ref="FILE"/>-->
     </logger>
 
-    <logger name="com.hamze.bpms.exposed_service.controller.ManagementController" additivity="false">
+    <logger name="com.hamze.banking.system.exposed_service.controller.ManagementController" additivity="false">
         <level value="debug"/>
         <appender-ref ref="STDOUT"/>
 <!--        <appender-ref ref="FILE"/>-->
@@ -137,7 +137,7 @@
 <!--        <appender-ref ref="DA_FILE"/>-->
     </logger>
 
-    <logger name="com.hamze.bpms.exposed_service.controller.GlobalControllerExceptionHandler" additivity="false">
+    <logger name="com.hamze.banking.system.exposed_service.controller.GlobalControllerExceptionHandler" additivity="false">
         <level value="error"/>
         <appender-ref ref="STDOUT"/>
 <!--        <appender-ref ref="FILE"/>-->
@@ -153,25 +153,8 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <logger name="org.camunda.bpm.engine" additivity="false">
-        <level value="info"/>
-        <appender-ref ref="STDOUT"/>
-        <!--        <appender-ref ref="FILE"/>-->
-    </logger>
-
-    <logger name="org.camunda.bpm" additivity="false">
-        <level value="info"/>
-        <appender-ref ref="STDOUT"/>
-        <!--        <appender-ref ref="FILE"/>-->
-    </logger>
-
     <logger name="org.camunda.bpm.engine.impl.persistence.entity" additivity="false">
         <level value="off"/>
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
-    <logger name="com.hamze.bpms.delegated_service" additivity="false">
-        <level value="debug"/>
         <appender-ref ref="STDOUT"/>
     </logger>
 
