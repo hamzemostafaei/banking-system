@@ -1,4 +1,4 @@
-package com.hamze.banking.system.shared.domain.enumeration;
+package com.hamze.banking.system.shared.data.base.enumeration;
 
 import java.io.Serializable;
 

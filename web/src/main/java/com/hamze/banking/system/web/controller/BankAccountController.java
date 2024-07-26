@@ -1,7 +1,13 @@
 package com.hamze.banking.system.web.controller;
 
+import com.hamze.banking.system.core.api.criteria.DepositCriteria;
 import com.hamze.banking.system.core.api.data.DepositDTO;
 import com.hamze.banking.system.core.api.service.IDepositService;
+import com.hamze.banking.system.web.api.data.DepositEdgeDTO;
+import com.hamze.banking.system.web.api.data.GetDepositDetailsEdgeRequestDTO;
+import com.hamze.banking.system.web.api.data.GetDepositDetailsEdgeResponseDTO;
+import com.hamze.banking.system.web.api.mapper.IDepositDTOEdgeResponseMapper;
+import com.hamze.banking.system.web.api.validation.IGetDepositDetailsEdgeRequestValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -20,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class BankAccountController {
 
     private final IDepositService depositService;
+    private final IDepositDTOEdgeResponseMapper depositDTOEdgeResponseMapper;
+    private final IGetDepositDetailsEdgeRequestValidator getDepositDetailsEdgeRequestValidator;
 
     @PostMapping(path = "/v1/open")
     public ResponseEntity<Object> open(@RequestBody Object request) {
@@ -57,7 +65,23 @@ public class BankAccountController {
     }
 
     @PostMapping(path = "/v1/detail")
-    public ResponseEntity<Object> detail(@RequestBody Object request) {
-        return ResponseEntity.ok(depositService.findById(1L));
+    public ResponseEntity<GetDepositDetailsEdgeResponseDTO> detail(@RequestBody GetDepositDetailsEdgeRequestDTO request) {
+
+        GetDepositDetailsEdgeResponseDTO response = new GetDepositDetailsEdgeResponseDTO();
+        boolean validationResult = getDepositDetailsEdgeRequestValidator.validate(request, response);
+
+        if(!validationResult){
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        DepositCriteria criteria = new DepositCriteria();
+        criteria.setDepositNumberEquals(request.getDepositNumber());
+
+        DepositDTO serviceResponse = depositService.getSingleResult(criteria);
+        DepositEdgeDTO responseData = depositDTOEdgeResponseMapper.objectToEdgeObject(serviceResponse);
+
+        response.setData(responseData);
+
+        return ResponseEntity.ok(response);
     }
 }

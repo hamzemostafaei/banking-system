@@ -1,6 +1,6 @@
 package com.hamze.banking.system.core.api.criteria.query.condition;
 
-import com.hamze.banking.system.shared.domain.enumeration.IMappedEnum;
+import com.hamze.banking.system.shared.data.base.enumeration.IMappedEnum;
 import lombok.Getter;
 
 import java.util.HashMap;
