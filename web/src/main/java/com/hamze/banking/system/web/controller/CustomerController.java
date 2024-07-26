@@ -12,9 +12,12 @@ import com.hamze.banking.system.web.api.data.CustomerEdgeDTO;
 import com.hamze.banking.system.web.api.data.GetCustomerEdgeResponseDTO;
 import com.hamze.banking.system.web.api.mapper.ICustomerDTOEdgeResponseMapper;
 import com.hamze.banking.system.web.api.validation.ICreateCustomerEdgeRequestValidator;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,9 +62,17 @@ public class CustomerController {
     }
 
     @GetMapping("/v1/{customerNumber}")
-    public ResponseEntity<GetCustomerEdgeResponseDTO> getCustomer(@PathVariable("customerNumber") String customerNumber) {
+    public ResponseEntity<GetCustomerEdgeResponseDTO> getCustomer(@PathVariable("customerNumber") String customerNumber, HttpServletRequest request) {
 
         GetCustomerEdgeResponseDTO response = new GetCustomerEdgeResponseDTO();
+
+        //TODO
+        String trackingNumber = (String) request.getAttribute("trackingNumber");
+        String transactionId = (String) request.getAttribute("transactionId");
+        Date registrationDate = (Date) request.getAttribute("registrationDate");
+        response.setRegistrationDate(registrationDate);
+        response.setTrackingNumber(trackingNumber);
+        response.setTransactionId(transactionId);
 
         CustomerCriteria customerCriteria = new CustomerCriteria();
         customerCriteria.setCustomerNumberEquals(customerNumber);

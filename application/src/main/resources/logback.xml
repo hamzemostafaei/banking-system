@@ -102,7 +102,7 @@
     </logger>
 
     <logger name="org.springframework.web" additivity="false">
-        <level value="debug"/>
+        <level value="info"/>
         <appender-ref ref="STDOUT"/>
 <!--        <appender-ref ref="FILE"/>-->
     </logger>
@@ -143,10 +143,6 @@
 <!--        <appender-ref ref="FILE"/>-->
     </logger>
 
-    <logger name="org.springframework.web" additivity="false">
-        <level value="off"/>
-        <appender-ref ref="STDOUT"/>
-    </logger>
 
     <logger name="org.springframework.security" additivity="false">
         <level value="info"/>
