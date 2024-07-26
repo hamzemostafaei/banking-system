@@ -38,10 +38,10 @@ import java.util.*;
 @Service("ABaseCoreService")
 @Transactional(propagation = Propagation.REQUIRED)
 public abstract class ABaseCoreService<D extends ABaseDTO,
-        E extends ABaseEntity,
-        ID extends Serializable,
-        C extends ISearchCriteria,
-        R extends JpaRepository<E, ID>>
+                                       E extends ABaseEntity,
+                                       ID extends Serializable,
+                                       C extends ISearchCriteria,
+                                       R extends JpaRepository<E, ID>>
         implements ICoreService<D, E, ID, C, R> {
 
     private final Class<E> entityClass;

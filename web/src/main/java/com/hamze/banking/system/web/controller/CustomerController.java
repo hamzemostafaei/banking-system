@@ -6,6 +6,7 @@ import com.hamze.banking.system.core.api.exception.CoreServiceException;
 import com.hamze.banking.system.core.api.service.ICustomerService;
 import com.hamze.banking.system.shared.data.base.dto.ErrorDTO;
 import com.hamze.banking.system.shared.data.base.enumeration.ErrorCodeEnum;
+import com.hamze.banking.system.shared.data.base.enumeration.ServiceStatusEnum;
 import com.hamze.banking.system.web.api.data.CreateCustomerEdgeRequestDTO;
 import com.hamze.banking.system.web.api.data.CreateCustomerEdgeResponseDTO;
 import com.hamze.banking.system.web.api.data.CustomerEdgeDTO;
@@ -73,13 +74,19 @@ public class CustomerController {
         response.setRegistrationDate(registrationDate);
         response.setTrackingNumber(trackingNumber);
         response.setTransactionId(transactionId);
+        response.setStatus(ServiceStatusEnum.Successful);
 
-        CustomerCriteria customerCriteria = new CustomerCriteria();
-        customerCriteria.setCustomerNumberEquals(customerNumber);
+        try {
+            CustomerCriteria customerCriteria = new CustomerCriteria();
+            customerCriteria.setCustomerNumberEquals(customerNumber);
 
-        CustomerDTO serviceResponse = customerService.getSingleResult(customerCriteria);
+            CustomerDTO serviceResponse = customerService.getSingleResult(customerCriteria);
 
-        response.setData(customerDTOEdgeResponseMapper.objectToEdgeObject(serviceResponse));
+            response.setData(customerDTOEdgeResponseMapper.objectToEdgeObject(serviceResponse));
+        } catch (Exception e) {
+            response.addError(new ErrorDTO(ErrorCodeEnum.InternalServiceError, "CreateCustomer"));
+            return ResponseEntity.internalServerError().body(response);
+        }
 
         return ResponseEntity.ok(response);
     }
