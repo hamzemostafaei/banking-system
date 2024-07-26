@@ -5,5 +5,11 @@ import com.hamze.banking.system.core.api.data.DepositDTO;
 import com.hamze.banking.system.data.access.entity.DepositEntity;
 import com.hamze.banking.system.data.access.repository.api.IDepositRepository;
 
-public interface IDepositService extends ICoreService<DepositDTO, DepositEntity,Long, DepositCriteria, IDepositRepository>{
+public interface IDepositService extends ICoreService<DepositDTO,
+                                                      DepositEntity,
+                                                      Long,
+                                                      DepositCriteria,
+                                                      IDepositRepository> {
+
+    DepositDTO openDeposit(DepositDTO deposit);
 }

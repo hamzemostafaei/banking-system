@@ -68,6 +68,18 @@
             <groupId>com.hamze.banking.system</groupId>
             <artifactId>shared</artifactId>
         </dependency>
+        <!-- DB -->
+        <!--<dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <scope>provided</scope>
+        </dependency>-->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- DB -->
     </dependencies>
 
     <build>

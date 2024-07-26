@@ -2,12 +2,14 @@ package com.hamze.banking.system.web.controller;
 
 import com.hamze.banking.system.core.api.criteria.DepositCriteria;
 import com.hamze.banking.system.core.api.data.DepositDTO;
+import com.hamze.banking.system.core.api.exception.CoreServiceException;
 import com.hamze.banking.system.core.api.service.IDepositService;
-import com.hamze.banking.system.web.api.data.DepositEdgeDTO;
-import com.hamze.banking.system.web.api.data.GetDepositDetailsEdgeRequestDTO;
-import com.hamze.banking.system.web.api.data.GetDepositDetailsEdgeResponseDTO;
+import com.hamze.banking.system.shared.data.base.dto.ErrorDTO;
+import com.hamze.banking.system.shared.data.base.enumeration.ErrorCodeEnum;
+import com.hamze.banking.system.web.api.data.*;
 import com.hamze.banking.system.web.api.mapper.IDepositDTOEdgeResponseMapper;
 import com.hamze.banking.system.web.api.validation.IGetDepositDetailsEdgeRequestValidator;
+import com.hamze.banking.system.web.api.validation.IOpenDepositEdgeRequestValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -28,10 +30,44 @@ public class BankAccountController {
     private final IDepositService depositService;
     private final IDepositDTOEdgeResponseMapper depositDTOEdgeResponseMapper;
     private final IGetDepositDetailsEdgeRequestValidator getDepositDetailsEdgeRequestValidator;
+    private final IOpenDepositEdgeRequestValidator openDepositEdgeRequestValidator;
 
     @PostMapping(path = "/v1/open")
-    public ResponseEntity<Object> open(@RequestBody Object request) {
-        return ResponseEntity.ok(request);
+    public ResponseEntity<OpenDepositEdgeResponseDTO> open(@RequestBody OpenDepositEdgeRequestDTO request) {
+
+        OpenDepositEdgeResponseDTO response = new OpenDepositEdgeResponseDTO();
+
+        boolean validationResult = openDepositEdgeRequestValidator.validate(request, response);
+        if (!validationResult) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(response);
+        }
+
+        DepositDTO deposit = new DepositDTO();
+        deposit.setDepositNumber(request.getDepositNumber());
+        deposit.setCustomerNumber(request.getCustomerNumber());
+        deposit.setDepositTitle(request.getDepositTitle());
+        deposit.setCurrency(request.getCurrency());
+
+        DepositDTO result;
+        try {
+            result = depositService.openDeposit(deposit);
+            DepositEdgeDTO responseData = depositDTOEdgeResponseMapper.objectToEdgeObject(result);
+            response.setData(responseData);
+        } catch (CoreServiceException e) {
+            response.setErrors(e.getErrors());
+            return ResponseEntity
+                    .badRequest()
+                    .body(response);
+        } catch (Exception e) {
+            response.addError(new ErrorDTO(ErrorCodeEnum.InternalServiceError, e.getMessage()));
+            return ResponseEntity
+                    .internalServerError()
+                    .body(response);
+        }
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(path = "/v1/close")
@@ -70,8 +106,10 @@ public class BankAccountController {
         GetDepositDetailsEdgeResponseDTO response = new GetDepositDetailsEdgeResponseDTO();
         boolean validationResult = getDepositDetailsEdgeRequestValidator.validate(request, response);
 
-        if(!validationResult){
-            return ResponseEntity.badRequest().body(response);
+        if (!validationResult) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(response);
         }
 
         DepositCriteria criteria = new DepositCriteria();

@@ -4,12 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class DepositEdgeDTO {
+public class OpenDepositEdgeRequestDTO extends ABaseEdgeRequestDTO {
 
     @JsonProperty("depositNumber")
     private String depositNumber;
@@ -22,16 +19,4 @@ public class DepositEdgeDTO {
 
     @JsonProperty("currency")
     private String currency;
-
-    @JsonProperty("openDate")
-    private Date openDate;
-
-    @JsonProperty("closeDate")
-    private Date closeDate;
-
-    @JsonProperty("status")
-    private Integer status;
-
-    @JsonProperty("openAmount")
-    private BigDecimal openAmount;
 }

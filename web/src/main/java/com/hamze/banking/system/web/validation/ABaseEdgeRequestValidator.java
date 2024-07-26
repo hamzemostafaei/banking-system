@@ -41,7 +41,7 @@ public abstract class ABaseEdgeRequestValidator<RQ extends ABaseEdgeRequestDTO,
         if (request.getTransactionId() != null) {
             response.setTransactionId(request.getTransactionId());
         } else {
-            response.setTransactionId(Long.toString(SnowFlakeUniqueIDGenerator.nextId(nodeId)));
+            response.setTransactionId(Long.toString(SnowFlakeUniqueIDGenerator.generateNextId(nodeId)));
         }
 
         return handleResult(response);
