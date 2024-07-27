@@ -2,8 +2,8 @@ package com.hamze.banking.system.core.service;
 
 import com.hamze.banking.system.core.api.criteria.AccountCriteria;
 import com.hamze.banking.system.core.api.data.account.AccountDTO;
-import com.hamze.banking.system.core.api.data.account.custom.CreditAccountRequestDTO;
-import com.hamze.banking.system.core.api.data.account.custom.DebitAccountRequestDTO;
+import com.hamze.banking.system.core.api.data.account.custom.TransactionRequestDTO;
+import com.hamze.banking.system.core.api.data.account.custom.TransferRequestDTO;
 import com.hamze.banking.system.core.api.data.account.custom.VoucherDTO;
 import com.hamze.banking.system.core.api.exception.CoreServiceException;
 import com.hamze.banking.system.core.api.service.IAccountFinancialService;
@@ -15,7 +15,6 @@ import com.hamze.banking.system.shared.data.base.dto.ErrorDTO;
 import com.hamze.banking.system.shared.data.base.enumeration.ErrorCodeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +52,7 @@ public class BankAccountServiceImpl extends ABaseCoreService<AccountDTO,
         AccountDTO savedAccount = save(request);
 
         if (savedAccount.getOpenAmount().compareTo(BigDecimal.ZERO) >= 0) {
-            CreditAccountRequestDTO creditRequest = new CreditAccountRequestDTO();
+            TransactionRequestDTO creditRequest = new TransactionRequestDTO();
             creditRequest.setDescription("افتتاح سپرده");
             creditRequest.setAmount(savedAccount.getOpenAmount());
             creditRequest.setAccountNumber(savedAccount.getAccountNumber());
@@ -64,13 +63,18 @@ public class BankAccountServiceImpl extends ABaseCoreService<AccountDTO,
     }
 
     @Override
-    public VoucherDTO credit(CreditAccountRequestDTO request) {
+    public VoucherDTO credit(TransactionRequestDTO request) {
         return accountFinancialService.credit(request,this);
     }
 
     @Override
-    public VoucherDTO debit(DebitAccountRequestDTO request) {
+    public VoucherDTO debit(TransactionRequestDTO request) {
         return accountFinancialService.debit(request,this);
+    }
+
+    @Override
+    public VoucherDTO transfer(TransferRequestDTO request) {
+        return accountFinancialService.transfer(request,this);
     }
 
     private void checkCustomerExistence(AccountDTO account) {

@@ -2,8 +2,8 @@ package com.hamze.banking.system.web.controller;
 
 import com.hamze.banking.system.core.api.data.CustomerDTO;
 import com.hamze.banking.system.core.api.data.account.AccountDTO;
-import com.hamze.banking.system.core.api.data.account.custom.CreditAccountRequestDTO;
-import com.hamze.banking.system.core.api.data.account.custom.DebitAccountRequestDTO;
+import com.hamze.banking.system.core.api.data.account.custom.TransactionRequestDTO;
+import com.hamze.banking.system.core.api.data.account.custom.TransferRequestDTO;
 import com.hamze.banking.system.core.api.data.account.custom.VoucherDTO;
 import com.hamze.banking.system.core.api.exception.CoreServiceException;
 import com.hamze.banking.system.core.api.service.IBankAccountService;
@@ -11,12 +11,11 @@ import com.hamze.banking.system.core.api.service.ICustomerService;
 import com.hamze.banking.system.shared.data.base.dto.ErrorDTO;
 import com.hamze.banking.system.shared.data.base.enumeration.ErrorCodeEnum;
 import com.hamze.banking.system.web.api.data.*;
+import com.hamze.banking.system.web.api.data.transfer.TransferEdgeRequestDTO;
+import com.hamze.banking.system.web.api.data.transfer.TransferEdgeResponseDTO;
 import com.hamze.banking.system.web.api.mapper.IAccountDTOEdgeResponseMapper;
 import com.hamze.banking.system.web.api.mapper.ICustomerDTOEdgeResponseMapper;
-import com.hamze.banking.system.web.api.validation.ICreateAccountEdgeRequestValidator;
-import com.hamze.banking.system.web.api.validation.IDepositBankAccountEdgeRequestValidator;
-import com.hamze.banking.system.web.api.validation.IGetAccountDetailsEdgeRequestValidator;
-import com.hamze.banking.system.web.api.validation.IWithdrawBankAccountEdgeRequestValidator;
+import com.hamze.banking.system.web.api.validation.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -42,6 +41,7 @@ public class BankAccountController {
     private final ICustomerDTOEdgeResponseMapper customerDTOEdgeResponseMapper;
     private final IWithdrawBankAccountEdgeRequestValidator withdrawBankAccountEdgeRequestValidator;
     private final IDepositBankAccountEdgeRequestValidator depositBankAccountEdgeRequestValidator;
+    private final ITransferEdgeRequestValidator transferEdgeRequestValidator;
 
     @PostMapping(path = "/v1/create")
     public ResponseEntity<CreateAccountEdgeResponseDTO> createAccount(@RequestBody CreateAccountEdgeRequestDTO request) {
@@ -98,7 +98,7 @@ public class BankAccountController {
         }
 
         try {
-            CreditAccountRequestDTO creditRequest = new CreditAccountRequestDTO();
+            TransactionRequestDTO creditRequest = new TransactionRequestDTO();
             creditRequest.setAccountNumber(request.getAccountNumber());
             creditRequest.setAmount(request.getAmount());
             creditRequest.setDescription(request.getDescription());
@@ -131,7 +131,7 @@ public class BankAccountController {
         }
 
         try {
-            DebitAccountRequestDTO debitRequest = new DebitAccountRequestDTO();
+            TransactionRequestDTO debitRequest = new TransactionRequestDTO();
             debitRequest.setAccountNumber(request.getAccountNumber());
             debitRequest.setAmount(request.getAmount());
             debitRequest.setDescription(request.getDescription());
@@ -155,8 +155,43 @@ public class BankAccountController {
     }
 
     @PostMapping(path = "/v1/transfer")
-    public ResponseEntity<Object> transfer(@RequestBody Object request) {
-        return ResponseEntity.ok(request);
+    public ResponseEntity<TransferEdgeResponseDTO> transfer(@RequestBody TransferEdgeRequestDTO request) {
+        TransferEdgeResponseDTO response = new TransferEdgeResponseDTO();
+        boolean validationResult = transferEdgeRequestValidator.validate(request, response);
+        if (!validationResult) {
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        try {
+            TransactionRequestDTO source = new TransactionRequestDTO();
+            source.setAccountNumber(request.getSource().getAccountNumber());
+            source.setDescription(request.getSource().getDescription());
+            source.setAmount(request.getSource().getAmount());
+
+            TransactionRequestDTO destination = new TransactionRequestDTO();
+            destination.setAccountNumber(request.getDestination().getAccountNumber());
+            destination.setDescription(request.getDestination().getDescription());
+            destination.setAmount(request.getDestination().getAmount());
+
+            TransferRequestDTO transferRequest = new TransferRequestDTO();
+            transferRequest.setSource(source);
+            transferRequest.setDestination(destination);
+
+            VoucherDTO serviceResponse = bankAccountService.transfer(transferRequest);
+            VoucherEdgeDTO responseData = new VoucherEdgeDTO();
+            responseData.setTurnoverDate(serviceResponse.getTurnoverDate());
+            responseData.setTurnoverNumber(serviceResponse.getTurnoverNumber());
+            response.setData(responseData);
+
+        } catch (CoreServiceException e) {
+            response.setErrors(e.getErrors());
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception e) {
+            response.addError(new ErrorDTO(ErrorCodeEnum.InternalServiceError, "Transfer"));
+            return ResponseEntity.internalServerError().body(response);
+        }
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(path = "/v1/balance")

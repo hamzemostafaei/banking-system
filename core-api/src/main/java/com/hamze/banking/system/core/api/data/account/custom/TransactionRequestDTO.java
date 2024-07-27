@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Data
 @EqualsAndHashCode
-public class CreditAccountRequestDTO {
+public class TransactionRequestDTO {
     private String accountNumber;
     private String description;
     private BigDecimal amount;

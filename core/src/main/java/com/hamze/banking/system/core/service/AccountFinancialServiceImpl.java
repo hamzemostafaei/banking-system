@@ -3,13 +3,14 @@ package com.hamze.banking.system.core.service;
 import com.hamze.banking.system.core.api.criteria.AccountTurnoverCriteria;
 import com.hamze.banking.system.core.api.data.account.AccountDTO;
 import com.hamze.banking.system.core.api.data.account.AccountTurnoverDTO;
-import com.hamze.banking.system.core.api.data.account.custom.CreditAccountRequestDTO;
-import com.hamze.banking.system.core.api.data.account.custom.DebitAccountRequestDTO;
+import com.hamze.banking.system.core.api.data.account.custom.TransactionRequestDTO;
+import com.hamze.banking.system.core.api.data.account.custom.TransferRequestDTO;
 import com.hamze.banking.system.core.api.data.account.custom.VoucherDTO;
 import com.hamze.banking.system.core.api.exception.CoreServiceException;
 import com.hamze.banking.system.core.api.service.IAccountFinancialService;
 import com.hamze.banking.system.core.api.service.IBankAccountService;
 import com.hamze.banking.system.data.access.entity.AccountTurnoverEntity;
+import com.hamze.banking.system.data.access.entity.id.AccountTurnoverEntityId;
 import com.hamze.banking.system.data.access.repository.api.IAccountTurnoverRepository;
 import com.hamze.banking.system.shared.data.base.dto.ErrorDTO;
 import com.hamze.banking.system.shared.data.base.enumeration.ErrorCodeEnum;
@@ -27,7 +28,7 @@ import java.util.Date;
 @Service("AccountFinancialService")
 public class AccountFinancialServiceImpl extends ABaseCoreService<AccountTurnoverDTO,
                                                                   AccountTurnoverEntity,
-                                                                  Long,
+                                                                  AccountTurnoverEntityId,
                                                                   AccountTurnoverCriteria,
                                                                   IAccountTurnoverRepository>
         implements IAccountFinancialService {
@@ -36,52 +37,87 @@ public class AccountFinancialServiceImpl extends ABaseCoreService<AccountTurnove
     private Long nodeId;
 
     @Override
-    public VoucherDTO credit(CreditAccountRequestDTO request,IBankAccountService bankAccountService) {
-
-        AccountDTO account = getAndValidateAccount(request.getAccountNumber(), bankAccountService);
-
-        AccountTurnoverDTO creditTurnover = createTurnover(
-                request.getDescription(),
-                request.getAmount(),
-                account.getAccountNumber(),
-                "D1001"
-        );
-
-        BigDecimal newBalance = calculateBalance(account, request.getAmount());
-        creditTurnover.setEntryBalance(newBalance);
-        account.setBalance(newBalance);
-
-        saveTurnoverAndAccount(creditTurnover, account, bankAccountService);
-        return createVoucherResponse(creditTurnover);
+    public VoucherDTO credit(TransactionRequestDTO request, IBankAccountService bankAccountService) {
+        return addEntry(request, bankAccountService, false, "D1001");
     }
 
     @Override
-    public VoucherDTO debit(DebitAccountRequestDTO request,IBankAccountService bankAccountService) {
+    public VoucherDTO debit(TransactionRequestDTO request, IBankAccountService bankAccountService) {
+        return addEntry(request, bankAccountService, true, "D1002");
+    }
+
+    private VoucherDTO addEntry(TransactionRequestDTO request, IBankAccountService bankAccountService, boolean isDebit, String transactionType) {
+        return addEntry(
+                request,
+                bankAccountService,
+                isDebit,
+                transactionType,
+                SnowFlakeUniqueIDGenerator.generateNextId(nodeId),
+                new Date(),
+                1
+        );
+    }
+
+    public VoucherDTO addEntry(TransactionRequestDTO request,
+                               IBankAccountService bankAccountService,
+                               boolean isDebit,
+                               String transactionType,
+                               Long turnoverNumber,
+                               Date turnoverDate,
+                               Integer entryNumber) {
 
         AccountDTO account = getAndValidateAccount(request.getAccountNumber(),bankAccountService);
 
-        BigDecimal debitAmount = request.getAmount().negate();
-        AccountTurnoverDTO debitTurnover = createTurnover(
+        BigDecimal amount = isDebit ? request.getAmount().negate() : request.getAmount();
+
+        AccountTurnoverDTO turnover = createTurnover(
                 request.getDescription(),
-                debitAmount,
+                amount,
                 account.getAccountNumber(),
-                "D1002"
+                transactionType,
+                turnoverNumber,
+                turnoverDate,
+                entryNumber
         );
 
-        BigDecimal newBalance = calculateBalance(account, debitAmount);
-        debitTurnover.setEntryBalance(newBalance);
+        BigDecimal newBalance = calculateBalance(account, amount);
+        turnover.setEntryBalance(newBalance);
         account.setBalance(newBalance);
 
-        saveTurnoverAndAccount(debitTurnover, account, bankAccountService);
-        return createVoucherResponse(debitTurnover);
+        saveTurnoverAndAccount(turnover, account, bankAccountService);
+        return createVoucherResponse(turnover);
     }
 
-    private AccountTurnoverDTO createTurnover(String description, BigDecimal amount, String accountNumber, String transactionType) {
+    @Override
+    public VoucherDTO transfer(TransferRequestDTO request, IBankAccountService bankAccountService) {
+
+        String transactionType = "D1004";
+        Long turnoverNumber = SnowFlakeUniqueIDGenerator.generateNextId(nodeId);
+        Date turnoverDate = new Date();
+
+        addEntry(request.getSource(), bankAccountService, true, transactionType,turnoverNumber,turnoverDate,1);
+        addEntry(request.getDestination(), bankAccountService, false, transactionType,turnoverNumber,turnoverDate,2);
+
+        VoucherDTO response = new VoucherDTO();
+        response.setTurnoverDate(turnoverDate);
+        response.setTurnoverNumber(turnoverNumber);
+
+        return response;
+    }
+
+    private AccountTurnoverDTO createTurnover(String description,
+                                              BigDecimal amount,
+                                              String accountNumber,
+                                              String transactionType,
+                                              Long turnoverNumber,
+                                              Date turnoverDate,
+                                              Integer entryNumber) {
         AccountTurnoverDTO turnover = new AccountTurnoverDTO();
-        turnover.setTurnoverId(SnowFlakeUniqueIDGenerator.generateNextId(nodeId));
-        turnover.setTurnoverNumber(SnowFlakeUniqueIDGenerator.generateNextId(nodeId));
-        turnover.setTurnoverDate(new Date());
-        turnover.setEntryNumber(1);
+        AccountTurnoverEntityId turnoverId = new AccountTurnoverEntityId();
+        turnoverId.setTurnoverNumber(turnoverNumber);
+        turnoverId.setTurnoverDate(turnoverDate);
+        turnoverId.setEntryNumber(entryNumber);
+        turnover.setTurnoverId(turnoverId);
         turnover.setDescription(description);
         turnover.setTransactionType(transactionType);
         turnover.setAmount(amount);
@@ -96,8 +132,8 @@ public class AccountFinancialServiceImpl extends ABaseCoreService<AccountTurnove
 
     private VoucherDTO createVoucherResponse(AccountTurnoverDTO turnover) {
         VoucherDTO response = new VoucherDTO();
-        response.setTurnoverDate(turnover.getTurnoverDate());
-        response.setTurnoverNumber(turnover.getTurnoverNumber());
+        response.setTurnoverDate(turnover.getTurnoverId().getTurnoverDate());
+        response.setTurnoverNumber(turnover.getTurnoverId().getTurnoverNumber());
         return response;
     }
 
