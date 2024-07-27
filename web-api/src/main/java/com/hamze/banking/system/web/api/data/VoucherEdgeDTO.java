@@ -4,10 +4,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Date;
+
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class GetDepositDetailsEdgeRequestDTO extends ABaseEdgeRequestDTO {
+public class VoucherEdgeDTO {
 
-    @JsonProperty("depositNumber")
-    private String depositNumber;
+    @JsonProperty("turnoverNumber")
+    private Long turnoverNumber;
+
+    @JsonProperty("turnoverDate")
+    private Date turnoverDate;
 }

@@ -4,19 +4,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.math.BigDecimal;
+
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class OpenDepositRequestDTO extends ABaseEdgeRequestDTO {
+public class CreateAccountEdgeRequestDTO extends ABaseEdgeRequestDTO {
 
-    @JsonProperty("depositNumber")
-    private String depositNumber;
+    @JsonProperty("accountNumber")
+    private String accountNumber;
 
     @JsonProperty("customerNumber")
     private Integer customerNumber;
 
-    @JsonProperty("depositTitle")
-    private String depositTitle;
+    @JsonProperty("accountTitle")
+    private String accountTitle;
 
     @JsonProperty("currency")
     private String currency;
+
+    @JsonProperty("openAmount")
+    private BigDecimal openAmount;
 }

@@ -13,20 +13,18 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@Table(name = "DEPOSIT")
-public class DepositEntity extends ABaseEntity {
-    @Id
-    @Column(name = "DEPOSIT_ID")
-    private Long depositId;
+@Table(name = "ACCOUNT")
+public class AccountEntity extends ABaseEntity {
 
-    @Column(name = "DEPOSIT_NUMBER", length = 21)
-    private String depositNumber;
+    @Id
+    @Column(name = "ACCOUNT_NUMBER", length = 21)
+    private String accountNumber;
 
     @Column(name = "CUSTOMER_NUMBER")
     private Integer customerNumber;
 
-    @Column(name = "DEPOSIT_TITLE", length = 256)
-    private String depositTitle;
+    @Column(name = "ACCOUNT_TITLE", length = 256)
+    private String accountTitle;
 
     @Column(name = "CURRENCY", length = 3)
     private String currency;
@@ -42,5 +40,8 @@ public class DepositEntity extends ABaseEntity {
 
     @Column(name = "OPEN_AMOUNT", precision = 22, scale = 2)
     private BigDecimal openAmount;
+
+    @Column(name = "BALANCE", precision = 22, scale = 2)
+    private BigDecimal balance;
 
 }

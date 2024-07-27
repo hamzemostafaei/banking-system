@@ -1,5 +1,6 @@
-package com.hamze.banking.system.core.api.data;
+package com.hamze.banking.system.core.api.data.account;
 
+import com.hamze.banking.system.core.api.data.ABaseDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -8,16 +9,15 @@ import java.util.Date;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class DepositDTO extends ABaseDTO {
+public class AccountDTO extends ABaseDTO {
 
-    private Long depositId;
-    private String depositNumber;
+    private String accountNumber;
     private Integer customerNumber;
-    private String depositTitle;
+    private String accountTitle;
     private String currency;
     private Date openDate;
     private Date closeDate;
     private Integer status;
     private BigDecimal openAmount;
-
+    private BigDecimal balance;
 }

@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class DepositCriteria extends ABaseSearchCriteria {
+public class AccountTurnoverCriteria extends ABaseSearchCriteria {
 
-    @Condition(type = ConditionTypeEnum.Equal, fieldName = "depositNumber")
-    private String depositNumberEquals;
+    @Condition(type = ConditionTypeEnum.Equal, fieldName = "accountNumber")
+    private String accountNumberEquals;
 }

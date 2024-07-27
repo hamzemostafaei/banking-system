@@ -2,14 +2,14 @@ package com.hamze.banking.system.shared.util;
 
 import com.hamze.banking.system.shared.data.base.dto.ErrorDTO;
 import com.hamze.banking.system.shared.data.base.enumeration.ErrorCodeEnum;
-import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.regex.Pattern;
 
 public final class ValidationUtil {
 
     private static final Pattern TRACKING_NUMBER_PATTERN = Pattern.compile("^[\\w\\-:.]{8,64}$");
-    private static final Pattern DEPOSIT_NUMBER_PATTERN = Pattern.compile("^[0-9]{1,4}\\.[0-9]{1,4}\\.[1-9][0-9]{0,7}\\.[0-9]{1,3}$");
+    private static final Pattern ACCOUNT_NUMBER_PATTERN = Pattern.compile("^[0-9]{1,4}\\.[0-9]{1,4}\\.[1-9][0-9]{0,7}\\.[0-9]{1,3}$");
     private static final Pattern NATIONAL_CODE_PATTERN = Pattern.compile("^\\d{10}$");
 
     public static ErrorDTO validateTrackingNumber(String trackingNumber) {
@@ -33,23 +33,43 @@ public final class ValidationUtil {
         return null;
     }
 
-    public static ErrorDTO validateDepositNumber(String depositNumber) {
-        return validateDepositNumber(depositNumber, "depositNumber", true);
+    public static ErrorDTO validateAccountNumber(String accountNumber) {
+        return validateAccountNumber(accountNumber, "accountNumber", true);
     }
 
-    public static ErrorDTO validateDepositNumber(String depositNumber, String fieldName) {
-        return validateDepositNumber(depositNumber, fieldName, true);
+    public static ErrorDTO validateAmount(BigDecimal amount){
+        return validateAmount(amount,"amount");
     }
 
-    public static ErrorDTO validateDepositNumber(String depositNumber,
-                                                 String fieldName,
-                                                 boolean mandatory) {
+    public static ErrorDTO validateAmount(BigDecimal amount,String fieldName){
+        return validateAmount(amount,fieldName,true);
+    }
 
-        if (mandatory && depositNumber == null) {
+    public static ErrorDTO validateAmount(BigDecimal amount,String fieldName,boolean mandatory){
+        if (mandatory && amount == null) {
             return new ErrorDTO(ErrorCodeEnum.MandatoryField, "MandatoryFieldNotSet", fieldName);
         }
 
-        if (depositNumber != null && !DEPOSIT_NUMBER_PATTERN.matcher(depositNumber).matches()) {
+        if (amount != null && amount.compareTo(BigDecimal.ZERO) < 0) {
+            return new ErrorDTO(ErrorCodeEnum.OutOfBoundsData, "DataFormatMismatch", fieldName);
+        }
+
+        return null;
+    }
+
+    public static ErrorDTO validateAccountNumber(String accountNumber, String fieldName) {
+        return validateAccountNumber(accountNumber, fieldName, true);
+    }
+
+    public static ErrorDTO validateAccountNumber(String accountNumber,
+                                                 String fieldName,
+                                                 boolean mandatory) {
+
+        if (mandatory && accountNumber == null) {
+            return new ErrorDTO(ErrorCodeEnum.MandatoryField, "MandatoryFieldNotSet", fieldName);
+        }
+
+        if (accountNumber != null && !ACCOUNT_NUMBER_PATTERN.matcher(accountNumber).matches()) {
             return new ErrorDTO(ErrorCodeEnum.DataFormatMismatch, "DataFormatMismatch", fieldName);
         }
 

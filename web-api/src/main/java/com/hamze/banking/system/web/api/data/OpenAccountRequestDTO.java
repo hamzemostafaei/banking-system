@@ -6,16 +6,16 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class OpenDepositEdgeRequestDTO extends ABaseEdgeRequestDTO {
+public class OpenAccountRequestDTO extends ABaseEdgeRequestDTO {
 
-    @JsonProperty("depositNumber")
-    private String depositNumber;
+    @JsonProperty("accountNumber")
+    private String accountNumber;
 
     @JsonProperty("customerNumber")
     private Integer customerNumber;
 
-    @JsonProperty("depositTitle")
-    private String depositTitle;
+    @JsonProperty("accountTitle")
+    private String accountTitle;
 
     @JsonProperty("currency")
     private String currency;

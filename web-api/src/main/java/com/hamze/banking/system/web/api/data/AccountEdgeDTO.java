@@ -9,16 +9,16 @@ import java.util.Date;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class DepositEdgeDTO {
+public class AccountEdgeDTO {
 
-    @JsonProperty("depositNumber")
-    private String depositNumber;
+    @JsonProperty("accountNumber")
+    private String accountNumber;
 
     @JsonProperty("customerNumber")
     private Integer customerNumber;
 
-    @JsonProperty("depositTitle")
-    private String depositTitle;
+    @JsonProperty("accountTitle")
+    private String accountTitle;
 
     @JsonProperty("currency")
     private String currency;
@@ -34,6 +34,9 @@ public class DepositEdgeDTO {
 
     @JsonProperty("openAmount")
     private BigDecimal openAmount;
+
+    @JsonProperty("balance")
+    private BigDecimal balance = BigDecimal.ZERO;
 
     @JsonProperty("holder")
     private CustomerEdgeDTO holder;

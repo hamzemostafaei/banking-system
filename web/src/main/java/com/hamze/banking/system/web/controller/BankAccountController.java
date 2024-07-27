@@ -1,18 +1,22 @@
 package com.hamze.banking.system.web.controller;
 
-import com.hamze.banking.system.core.api.criteria.DepositCriteria;
 import com.hamze.banking.system.core.api.data.CustomerDTO;
-import com.hamze.banking.system.core.api.data.DepositDTO;
+import com.hamze.banking.system.core.api.data.account.AccountDTO;
+import com.hamze.banking.system.core.api.data.account.custom.CreditAccountRequestDTO;
+import com.hamze.banking.system.core.api.data.account.custom.DebitAccountRequestDTO;
+import com.hamze.banking.system.core.api.data.account.custom.VoucherDTO;
 import com.hamze.banking.system.core.api.exception.CoreServiceException;
+import com.hamze.banking.system.core.api.service.IBankAccountService;
 import com.hamze.banking.system.core.api.service.ICustomerService;
-import com.hamze.banking.system.core.api.service.IDepositService;
 import com.hamze.banking.system.shared.data.base.dto.ErrorDTO;
 import com.hamze.banking.system.shared.data.base.enumeration.ErrorCodeEnum;
 import com.hamze.banking.system.web.api.data.*;
+import com.hamze.banking.system.web.api.mapper.IAccountDTOEdgeResponseMapper;
 import com.hamze.banking.system.web.api.mapper.ICustomerDTOEdgeResponseMapper;
-import com.hamze.banking.system.web.api.mapper.IDepositDTOEdgeResponseMapper;
-import com.hamze.banking.system.web.api.validation.IGetDepositDetailsEdgeRequestValidator;
-import com.hamze.banking.system.web.api.validation.IOpenDepositEdgeRequestValidator;
+import com.hamze.banking.system.web.api.validation.ICreateAccountEdgeRequestValidator;
+import com.hamze.banking.system.web.api.validation.IDepositBankAccountEdgeRequestValidator;
+import com.hamze.banking.system.web.api.validation.IGetAccountDetailsEdgeRequestValidator;
+import com.hamze.banking.system.web.api.validation.IWithdrawBankAccountEdgeRequestValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -30,35 +34,39 @@ import org.springframework.web.bind.annotation.RestController;
         produces = MediaType.APPLICATION_JSON_VALUE)
 public class BankAccountController {
 
-    private final IDepositService depositService;
+    private final IBankAccountService bankAccountService;
     private final ICustomerService customerService;
-    private final IDepositDTOEdgeResponseMapper depositDTOEdgeResponseMapper;
-    private final IGetDepositDetailsEdgeRequestValidator getDepositDetailsEdgeRequestValidator;
-    private final IOpenDepositEdgeRequestValidator openDepositEdgeRequestValidator;
+    private final IAccountDTOEdgeResponseMapper accountDTOEdgeResponseMapper;
+    private final IGetAccountDetailsEdgeRequestValidator getAccountDetailsEdgeRequestValidator;
+    private final ICreateAccountEdgeRequestValidator createAccountEdgeRequestValidator;
     private final ICustomerDTOEdgeResponseMapper customerDTOEdgeResponseMapper;
+    private final IWithdrawBankAccountEdgeRequestValidator withdrawBankAccountEdgeRequestValidator;
+    private final IDepositBankAccountEdgeRequestValidator depositBankAccountEdgeRequestValidator;
 
-    @PostMapping(path = "/v1/open")
-    public ResponseEntity<OpenDepositEdgeResponseDTO> open(@RequestBody OpenDepositEdgeRequestDTO request) {
+    @PostMapping(path = "/v1/create")
+    public ResponseEntity<CreateAccountEdgeResponseDTO> createAccount(@RequestBody CreateAccountEdgeRequestDTO request) {
 
-        OpenDepositEdgeResponseDTO response = new OpenDepositEdgeResponseDTO();
+        CreateAccountEdgeResponseDTO response = new CreateAccountEdgeResponseDTO();
 
-        boolean validationResult = openDepositEdgeRequestValidator.validate(request, response);
+        boolean validationResult = createAccountEdgeRequestValidator.validate(request, response);
         if (!validationResult) {
             return ResponseEntity
                     .badRequest()
                     .body(response);
         }
 
-        DepositDTO deposit = new DepositDTO();
-        deposit.setDepositNumber(request.getDepositNumber());
-        deposit.setCustomerNumber(request.getCustomerNumber());
-        deposit.setDepositTitle(request.getDepositTitle());
-        deposit.setCurrency(request.getCurrency());
+        AccountDTO account = new AccountDTO();
+        account.setAccountNumber(request.getAccountNumber());
+        account.setCustomerNumber(request.getCustomerNumber());
+        account.setAccountTitle(request.getAccountTitle());
+        account.setCurrency(request.getCurrency());
+        account.setOpenAmount(request.getOpenAmount());
 
-        DepositDTO result;
         try {
-            result = depositService.openDeposit(deposit);
-            DepositEdgeDTO responseData = depositDTOEdgeResponseMapper.objectToEdgeObject(result);
+            AccountDTO result = bankAccountService.createAccount(account);
+            AccountEdgeDTO responseData = accountDTOEdgeResponseMapper.objectToEdgeObject(result);
+            CustomerDTO holder = customerService.findById(request.getCustomerNumber());
+            responseData.setHolder(customerDTOEdgeResponseMapper.objectToEdgeObject(holder));
             response.setData(responseData);
         } catch (CoreServiceException e) {
             response.setErrors(e.getErrors());
@@ -81,13 +89,69 @@ public class BankAccountController {
     }
 
     @PostMapping(path = "/v1/deposit")
-    public ResponseEntity<Object> deposit(@RequestBody Object request) {
-        return ResponseEntity.ok(request);
+    public ResponseEntity<DepositBankAccountEdgeResponseDTO> deposit(@RequestBody DepositBankAccountEdgeRequestDTO request) {
+        DepositBankAccountEdgeResponseDTO response = new DepositBankAccountEdgeResponseDTO();
+
+        boolean validationResult = depositBankAccountEdgeRequestValidator.validate(request, response);
+        if (!validationResult) {
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        try {
+            CreditAccountRequestDTO creditRequest = new CreditAccountRequestDTO();
+            creditRequest.setAccountNumber(request.getAccountNumber());
+            creditRequest.setAmount(request.getAmount());
+            creditRequest.setDescription(request.getDescription());
+
+            VoucherDTO serviceResponse = bankAccountService.credit(creditRequest);
+
+            VoucherEdgeDTO responseData = new VoucherEdgeDTO();
+            responseData.setTurnoverDate(serviceResponse.getTurnoverDate());
+            responseData.setTurnoverNumber(serviceResponse.getTurnoverNumber());
+
+            response.setData(responseData);
+        } catch (CoreServiceException e) {
+            response.setErrors(e.getErrors());
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception e) {
+            response.addError(new ErrorDTO(ErrorCodeEnum.InternalServiceError, "DepositBankAccount"));
+            return ResponseEntity.internalServerError().body(response);
+        }
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(path = "/v1/withdraw")
-    public ResponseEntity<Object> withdraw(@RequestBody Object request) {
-        return ResponseEntity.ok(request);
+    public ResponseEntity<WithdrawBankAccountEdgeResponseDTO> withdraw(@RequestBody WithdrawBankAccountEdgeRequestDTO request) {
+        WithdrawBankAccountEdgeResponseDTO response = new WithdrawBankAccountEdgeResponseDTO();
+
+        boolean validationResult = withdrawBankAccountEdgeRequestValidator.validate(request, response);
+        if (!validationResult) {
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        try {
+            DebitAccountRequestDTO debitRequest = new DebitAccountRequestDTO();
+            debitRequest.setAccountNumber(request.getAccountNumber());
+            debitRequest.setAmount(request.getAmount());
+            debitRequest.setDescription(request.getDescription());
+
+            VoucherDTO serviceResponse = bankAccountService.debit(debitRequest);
+
+            VoucherEdgeDTO responseData = new VoucherEdgeDTO();
+            responseData.setTurnoverDate(serviceResponse.getTurnoverDate());
+            responseData.setTurnoverNumber(serviceResponse.getTurnoverNumber());
+
+            response.setData(responseData);
+        } catch (CoreServiceException e) {
+            response.setErrors(e.getErrors());
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception e) {
+            response.addError(new ErrorDTO(ErrorCodeEnum.InternalServiceError, "WithdrawBankAccount"));
+            return ResponseEntity.internalServerError().body(response);
+        }
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(path = "/v1/transfer")
@@ -106,10 +170,10 @@ public class BankAccountController {
     }
 
     @PostMapping(path = "/v1/detail")
-    public ResponseEntity<GetDepositDetailsEdgeResponseDTO> detail(@RequestBody GetDepositDetailsEdgeRequestDTO request) {
+    public ResponseEntity<GetAccountDetailsEdgeResponseDTO> detail(@RequestBody GetAccountDetailsEdgeRequestDTO request) {
 
-        GetDepositDetailsEdgeResponseDTO response = new GetDepositDetailsEdgeResponseDTO();
-        boolean validationResult = getDepositDetailsEdgeRequestValidator.validate(request, response);
+        GetAccountDetailsEdgeResponseDTO response = new GetAccountDetailsEdgeResponseDTO();
+        boolean validationResult = getAccountDetailsEdgeRequestValidator.validate(request, response);
 
         if (!validationResult) {
             return ResponseEntity
@@ -117,14 +181,11 @@ public class BankAccountController {
                     .body(response);
         }
 
-        DepositCriteria criteria = new DepositCriteria();
-        criteria.setDepositNumberEquals(request.getDepositNumber());
+        AccountDTO serviceResponse = bankAccountService.findById(request.getAccountNumber());
 
-        DepositDTO depositServiceResponse = depositService.getSingleResult(criteria);
-
-        if (depositServiceResponse != null) {
-            DepositEdgeDTO responseData = depositDTOEdgeResponseMapper.objectToEdgeObject(depositServiceResponse);
-            CustomerDTO holderCustomer = customerService.findById(depositServiceResponse.getCustomerNumber());
+        if (serviceResponse != null) {
+            AccountEdgeDTO responseData = accountDTOEdgeResponseMapper.objectToEdgeObject(serviceResponse);
+            CustomerDTO holderCustomer = customerService.findById(serviceResponse.getCustomerNumber());
             CustomerEdgeDTO customerEdge = customerDTOEdgeResponseMapper.objectToEdgeObject(holderCustomer);
             responseData.setHolder(customerEdge);
             response.setData(responseData);

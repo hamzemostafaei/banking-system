@@ -5,5 +5,5 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class GetDepositDetailsEdgeResponseDTO extends ABaseEdgeResponseDataDTO<DepositEdgeDTO> {
+public class WithdrawBankAccountEdgeResponseDTO extends ABaseEdgeResponseDataDTO<VoucherEdgeDTO> {
 }
