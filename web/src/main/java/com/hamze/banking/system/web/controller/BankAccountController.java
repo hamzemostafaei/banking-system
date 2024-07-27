@@ -100,8 +100,8 @@ public class BankAccountController {
         return ResponseEntity.ok(request);
     }
 
-    @PostMapping(path = "/v1/bill")
-    public ResponseEntity<Object> turnover(@RequestBody Object request) {
+    @PostMapping(path = "/v1/statement")
+    public ResponseEntity<Object> statement(@RequestBody Object request) {
         return ResponseEntity.ok(request);
     }
 
