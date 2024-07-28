@@ -17,6 +17,8 @@ import com.hamze.banking.system.shared.data.base.enumeration.ErrorCodeEnum;
 import com.hamze.banking.system.shared.util.SnowFlakeUniqueIDGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,8 @@ public class AccountTurnoverServiceImpl extends ABaseCoreService<AccountTurnover
                                                                  AccountTurnoverCriteria,
                                                                  IAccountTurnoverRepository>
         implements IAccountTurnoverService {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Value("${com.hamze.banking.system.node-id}")
     private Long nodeId;
