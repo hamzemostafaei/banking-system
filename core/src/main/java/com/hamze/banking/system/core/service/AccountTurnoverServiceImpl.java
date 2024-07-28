@@ -7,8 +7,9 @@ import com.hamze.banking.system.core.api.data.account.custom.TransactionRequestD
 import com.hamze.banking.system.core.api.data.account.custom.TransferRequestDTO;
 import com.hamze.banking.system.core.api.data.account.custom.VoucherDTO;
 import com.hamze.banking.system.core.api.exception.CoreServiceException;
-import com.hamze.banking.system.core.api.service.IAccountTurnoverService;
 import com.hamze.banking.system.core.api.service.IAccountService;
+import com.hamze.banking.system.core.api.service.IAccountTurnoverService;
+import com.hamze.banking.system.core.api.logging.ITransactionObserver;
 import com.hamze.banking.system.data.access.entity.AccountTurnoverEntity;
 import com.hamze.banking.system.data.access.entity.id.AccountTurnoverEntityId;
 import com.hamze.banking.system.data.access.repository.api.IAccountTurnoverRepository;
@@ -17,13 +18,12 @@ import com.hamze.banking.system.shared.data.base.enumeration.ErrorCodeEnum;
 import com.hamze.banking.system.shared.util.SnowFlakeUniqueIDGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,12 +35,11 @@ public class AccountTurnoverServiceImpl extends ABaseCoreService<AccountTurnover
                                                                  IAccountTurnoverRepository>
         implements IAccountTurnoverService {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
     @Value("${com.hamze.banking.system.node-id}")
     private Long nodeId;
 
     private final IAccountService accountService;
+    private final List<ITransactionObserver> observers;
 
     @Override
     public VoucherDTO credit(TransactionRequestDTO request) {
@@ -90,7 +89,14 @@ public class AccountTurnoverServiceImpl extends ABaseCoreService<AccountTurnover
         account.setBalance(newBalance);
 
         saveTurnoverAndAccount(initialBal,turnover, account);
-        return createVoucherResponse(turnover);
+
+        // Notify observers after processing the transaction
+
+        VoucherDTO voucherResponse = createVoucherResponse(turnover);
+
+        notifyObservers(account.getAccountNumber(), transactionType, amount,voucherResponse);
+
+        return voucherResponse;
     }
 
     @Override
@@ -174,5 +180,11 @@ public class AccountTurnoverServiceImpl extends ABaseCoreService<AccountTurnover
                     .build();
         }
         return newBalance;
+    }
+
+    private void notifyObservers(String accountNumber, String transactionType, BigDecimal amount,VoucherDTO voucherResponse) {
+        for (ITransactionObserver observer : observers) {
+            observer.onTransaction(accountNumber, transactionType, amount.doubleValue(),voucherResponse);
+        }
     }
 }

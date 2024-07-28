@@ -154,6 +154,11 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
+    <logger name="com.hamze.banking.system.transactions.log" additivity="false">
+        <level value="off"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
     <root level="info">
         <appender-ref ref="STDOUT"/>
 <!--        <appender-ref ref="FILE"/>-->
