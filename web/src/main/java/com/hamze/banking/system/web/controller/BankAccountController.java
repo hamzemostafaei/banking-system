@@ -63,7 +63,7 @@ public class BankAccountController {
         account.setOpenAmount(request.getOpenAmount());
 
         try {
-            AccountDTO result = bankAccountService.createAccount(account);
+            AccountDTO result = bankAccountService.create(account);
             AccountEdgeDTO responseData = accountDTOEdgeResponseMapper.objectToEdgeObject(result);
             CustomerDTO holder = customerService.findById(request.getCustomerNumber());
             responseData.setHolder(customerDTOEdgeResponseMapper.objectToEdgeObject(holder));
@@ -163,19 +163,7 @@ public class BankAccountController {
         }
 
         try {
-            TransactionRequestDTO source = new TransactionRequestDTO();
-            source.setAccountNumber(request.getSource().getAccountNumber());
-            source.setDescription(request.getSource().getDescription());
-            source.setAmount(request.getSource().getAmount());
-
-            TransactionRequestDTO destination = new TransactionRequestDTO();
-            destination.setAccountNumber(request.getDestination().getAccountNumber());
-            destination.setDescription(request.getDestination().getDescription());
-            destination.setAmount(request.getDestination().getAmount());
-
-            TransferRequestDTO transferRequest = new TransferRequestDTO();
-            transferRequest.setSource(source);
-            transferRequest.setDestination(destination);
+            TransferRequestDTO transferRequest = getTransferRequestDTO(request);
 
             VoucherDTO serviceResponse = bankAccountService.transfer(transferRequest);
             VoucherEdgeDTO responseData = new VoucherEdgeDTO();
@@ -216,7 +204,7 @@ public class BankAccountController {
                     .body(response);
         }
 
-        AccountDTO serviceResponse = bankAccountService.findById(request.getAccountNumber());
+        AccountDTO serviceResponse = bankAccountService.details(request.getAccountNumber());
 
         if (serviceResponse != null) {
             AccountEdgeDTO responseData = accountDTOEdgeResponseMapper.objectToEdgeObject(serviceResponse);
@@ -227,5 +215,22 @@ public class BankAccountController {
         }
 
         return ResponseEntity.ok(response);
+    }
+
+    private TransferRequestDTO getTransferRequestDTO(TransferEdgeRequestDTO request) {
+        TransactionRequestDTO source = new TransactionRequestDTO();
+        source.setAccountNumber(request.getSource().getAccountNumber());
+        source.setDescription(request.getSource().getDescription());
+        source.setAmount(request.getSource().getAmount());
+
+        TransactionRequestDTO destination = new TransactionRequestDTO();
+        destination.setAccountNumber(request.getDestination().getAccountNumber());
+        destination.setDescription(request.getDestination().getDescription());
+        destination.setAmount(request.getDestination().getAmount());
+
+        TransferRequestDTO transferRequest = new TransferRequestDTO();
+        transferRequest.setSource(source);
+        transferRequest.setDestination(destination);
+        return transferRequest;
     }
 }

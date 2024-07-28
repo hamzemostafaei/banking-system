@@ -1,100 +1,59 @@
 package com.hamze.banking.system.core.service;
 
-import com.hamze.banking.system.core.api.criteria.AccountCriteria;
 import com.hamze.banking.system.core.api.data.account.AccountDTO;
 import com.hamze.banking.system.core.api.data.account.custom.TransactionRequestDTO;
 import com.hamze.banking.system.core.api.data.account.custom.TransferRequestDTO;
 import com.hamze.banking.system.core.api.data.account.custom.VoucherDTO;
-import com.hamze.banking.system.core.api.exception.CoreServiceException;
-import com.hamze.banking.system.core.api.service.IAccountFinancialService;
+import com.hamze.banking.system.core.api.service.IAccountTurnoverService;
+import com.hamze.banking.system.core.api.service.IAccountService;
 import com.hamze.banking.system.core.api.service.IBankAccountService;
-import com.hamze.banking.system.core.api.service.ICustomerService;
-import com.hamze.banking.system.data.access.entity.AccountEntity;
-import com.hamze.banking.system.data.access.repository.api.IAccountRepository;
-import com.hamze.banking.system.shared.data.base.dto.ErrorDTO;
-import com.hamze.banking.system.shared.data.base.enumeration.ErrorCodeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service("BankAccountService")
-public class BankAccountServiceImpl extends ABaseCoreService<AccountDTO,
-                                                             AccountEntity,
-                                                             String,
-                                                             AccountCriteria,
-                                                             IAccountRepository>
-        implements IBankAccountService {
+@Transactional(propagation = Propagation.REQUIRED)
+public class BankAccountServiceImpl implements IBankAccountService {
 
-    @Value("${com.hamze.banking.system.node-id}")
-    private Long nodeId;
-
-    private final ICustomerService customerService;
-
-    private final IAccountFinancialService accountFinancialService;
+    private final IAccountService accountService;
+    private final IAccountTurnoverService accountTurnoverService;
 
     @Override
-    public AccountDTO createAccount(AccountDTO request) {
-
-        checkCustomerExistence(request);
-        checkAccountExistence(request);
-
-        request.setOpenDate(new Date());
-        request.setCloseDate(null);
-        request.setStatus(0);
-        request.setOpenAmount(request.getOpenAmount());
-
-        AccountDTO savedAccount = save(request);
-
-        if (savedAccount.getOpenAmount().compareTo(BigDecimal.ZERO) >= 0) {
-            TransactionRequestDTO creditRequest = new TransactionRequestDTO();
-            creditRequest.setDescription("افتتاح سپرده");
-            creditRequest.setAmount(savedAccount.getOpenAmount());
-            creditRequest.setAccountNumber(savedAccount.getAccountNumber());
-            accountFinancialService.credit(creditRequest,this);
+    public AccountDTO create(AccountDTO request) {
+        AccountDTO account = accountService.create(request);
+        if (request.getOpenAmount() != null && request.getOpenAmount().compareTo(BigDecimal.ZERO) > 0) {
+            TransactionRequestDTO initialCreditRequest = new TransactionRequestDTO();
+            initialCreditRequest.setDescription("افتتاح سپرده");
+            initialCreditRequest.setAccountNumber(account.getAccountNumber());
+            initialCreditRequest.setAmount(request.getOpenAmount());
+            accountTurnoverService.credit(initialCreditRequest);
         }
-
-        return savedAccount;
+        return account;
     }
 
     @Override
     public VoucherDTO credit(TransactionRequestDTO request) {
-        return accountFinancialService.credit(request,this);
+        return accountTurnoverService.credit(request);
     }
 
     @Override
     public VoucherDTO debit(TransactionRequestDTO request) {
-        return accountFinancialService.debit(request,this);
+        return accountTurnoverService.debit(request);
     }
 
     @Override
     public VoucherDTO transfer(TransferRequestDTO request) {
-        return accountFinancialService.transfer(request,this);
+        return accountTurnoverService.transfer(request);
     }
 
-    private void checkCustomerExistence(AccountDTO account) {
-        if (!customerService.existsById(account.getCustomerNumber())) {
-            String message = String.format("Customer [%s] does not exists", account.getCustomerNumber());
-            throw CoreServiceException.builder()
-                    .message(message)
-                    .error(new ErrorDTO(ErrorCodeEnum.DataNotFound, message, "AccountHolder"))
-                    .build();
-        }
-    }
-
-    private void checkAccountExistence(AccountDTO account) {
-
-        if (existsById(account.getAccountNumber())) {
-            String message = String.format("Account [%s] already exists", account.getAccountNumber());
-            throw CoreServiceException.builder()
-                    .message(message)
-                    .error(new ErrorDTO(ErrorCodeEnum.DuplicateData, message, "Account"))
-                    .build();
-        }
+    @Override
+    public AccountDTO details(String accountNumber) {
+        return accountService.findById(accountNumber);
     }
 }

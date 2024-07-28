@@ -9,13 +9,13 @@ import com.hamze.banking.system.data.access.entity.AccountTurnoverEntity;
 import com.hamze.banking.system.data.access.entity.id.AccountTurnoverEntityId;
 import com.hamze.banking.system.data.access.repository.api.IAccountTurnoverRepository;
 
-public interface IAccountFinancialService extends ICoreService<AccountTurnoverDTO,
+public interface IAccountTurnoverService extends ICoreService<AccountTurnoverDTO,
                                                                AccountTurnoverEntity,
                                                                AccountTurnoverEntityId,
                                                                AccountTurnoverCriteria,
                                                                IAccountTurnoverRepository> {
 
-    VoucherDTO credit(TransactionRequestDTO request, IBankAccountService bankAccountService);
-    VoucherDTO debit(TransactionRequestDTO request, IBankAccountService bankAccountService);
-    VoucherDTO transfer(TransferRequestDTO request, IBankAccountService bankAccountService);
+    VoucherDTO credit(TransactionRequestDTO request);
+    VoucherDTO debit(TransactionRequestDTO request);
+    VoucherDTO transfer(TransferRequestDTO request);
 }

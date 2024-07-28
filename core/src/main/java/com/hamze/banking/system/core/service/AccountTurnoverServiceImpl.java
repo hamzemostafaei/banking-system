@@ -7,8 +7,8 @@ import com.hamze.banking.system.core.api.data.account.custom.TransactionRequestD
 import com.hamze.banking.system.core.api.data.account.custom.TransferRequestDTO;
 import com.hamze.banking.system.core.api.data.account.custom.VoucherDTO;
 import com.hamze.banking.system.core.api.exception.CoreServiceException;
-import com.hamze.banking.system.core.api.service.IAccountFinancialService;
-import com.hamze.banking.system.core.api.service.IBankAccountService;
+import com.hamze.banking.system.core.api.service.IAccountTurnoverService;
+import com.hamze.banking.system.core.api.service.IAccountService;
 import com.hamze.banking.system.data.access.entity.AccountTurnoverEntity;
 import com.hamze.banking.system.data.access.entity.id.AccountTurnoverEntityId;
 import com.hamze.banking.system.data.access.repository.api.IAccountTurnoverRepository;
@@ -25,31 +25,32 @@ import java.util.Date;
 
 @Slf4j
 @RequiredArgsConstructor
-@Service("AccountFinancialService")
-public class AccountFinancialServiceImpl extends ABaseCoreService<AccountTurnoverDTO,
-                                                                  AccountTurnoverEntity,
-                                                                  AccountTurnoverEntityId,
-                                                                  AccountTurnoverCriteria,
-                                                                  IAccountTurnoverRepository>
-        implements IAccountFinancialService {
+@Service("AccountTurnoverService")
+public class AccountTurnoverServiceImpl extends ABaseCoreService<AccountTurnoverDTO,
+                                                                 AccountTurnoverEntity,
+                                                                 AccountTurnoverEntityId,
+                                                                 AccountTurnoverCriteria,
+                                                                 IAccountTurnoverRepository>
+        implements IAccountTurnoverService {
 
     @Value("${com.hamze.banking.system.node-id}")
     private Long nodeId;
 
+    private final IAccountService accountService;
+
     @Override
-    public VoucherDTO credit(TransactionRequestDTO request, IBankAccountService bankAccountService) {
-        return addEntry(request, bankAccountService, false, "D1001");
+    public VoucherDTO credit(TransactionRequestDTO request) {
+        return addEntry(request, false, "D1001");
     }
 
     @Override
-    public VoucherDTO debit(TransactionRequestDTO request, IBankAccountService bankAccountService) {
-        return addEntry(request, bankAccountService, true, "D1002");
+    public VoucherDTO debit(TransactionRequestDTO request) {
+        return addEntry(request, true, "D1002");
     }
 
-    private VoucherDTO addEntry(TransactionRequestDTO request, IBankAccountService bankAccountService, boolean isDebit, String transactionType) {
+    private VoucherDTO addEntry(TransactionRequestDTO request, boolean isDebit, String transactionType) {
         return addEntry(
                 request,
-                bankAccountService,
                 isDebit,
                 transactionType,
                 SnowFlakeUniqueIDGenerator.generateNextId(nodeId),
@@ -59,14 +60,13 @@ public class AccountFinancialServiceImpl extends ABaseCoreService<AccountTurnove
     }
 
     public VoucherDTO addEntry(TransactionRequestDTO request,
-                               IBankAccountService bankAccountService,
                                boolean isDebit,
                                String transactionType,
                                Long turnoverNumber,
                                Date turnoverDate,
                                Integer entryNumber) {
 
-        AccountDTO account = getAndValidateAccount(request.getAccountNumber(),bankAccountService);
+        AccountDTO account = getAndValidateAccount(request.getAccountNumber());
 
         BigDecimal amount = isDebit ? request.getAmount().negate() : request.getAmount();
 
@@ -84,19 +84,19 @@ public class AccountFinancialServiceImpl extends ABaseCoreService<AccountTurnove
         turnover.setEntryBalance(newBalance);
         account.setBalance(newBalance);
 
-        saveTurnoverAndAccount(turnover, account, bankAccountService);
+        saveTurnoverAndAccount(turnover, account, accountService);
         return createVoucherResponse(turnover);
     }
 
     @Override
-    public VoucherDTO transfer(TransferRequestDTO request, IBankAccountService bankAccountService) {
+    public VoucherDTO transfer(TransferRequestDTO request) {
 
         String transactionType = "D1004";
         Long turnoverNumber = SnowFlakeUniqueIDGenerator.generateNextId(nodeId);
         Date turnoverDate = new Date();
 
-        addEntry(request.getSource(), bankAccountService, true, transactionType,turnoverNumber,turnoverDate,1);
-        addEntry(request.getDestination(), bankAccountService, false, transactionType,turnoverNumber,turnoverDate,2);
+        addEntry(request.getSource(), true, transactionType,turnoverNumber,turnoverDate,1);
+        addEntry(request.getDestination(), false, transactionType,turnoverNumber,turnoverDate,2);
 
         VoucherDTO response = new VoucherDTO();
         response.setTurnoverDate(turnoverDate);
@@ -125,7 +125,7 @@ public class AccountFinancialServiceImpl extends ABaseCoreService<AccountTurnove
         return turnover;
     }
 
-    private void saveTurnoverAndAccount(AccountTurnoverDTO turnover, AccountDTO account,IBankAccountService bankAccountService) {
+    private void saveTurnoverAndAccount(AccountTurnoverDTO turnover, AccountDTO account, IAccountService bankAccountService) {
         save(turnover);
         bankAccountService.save(account);
     }
@@ -137,8 +137,8 @@ public class AccountFinancialServiceImpl extends ABaseCoreService<AccountTurnove
         return response;
     }
 
-    private AccountDTO getAndValidateAccount(String accountNumber,IBankAccountService bankAccountService) {
-        AccountDTO account = bankAccountService.findById(accountNumber);
+    private AccountDTO getAndValidateAccount(String accountNumber) {
+        AccountDTO account = accountService.findById(accountNumber);
         if (account == null) {
             String message = String.format("Account [%s] not found", accountNumber);
             throw CoreServiceException.builder()
