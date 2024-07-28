@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum ServiceStatusEnum implements IMappedEnum<ServiceStatusEnum, Integer> {
+public enum ServiceStatusEnum implements IMappedEnum<Integer> {
 
     BeingProcessed(0),
     Successful(1),

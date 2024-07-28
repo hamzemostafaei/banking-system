@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum ErrorCodeEnum implements IMappedEnum<ErrorCodeEnum, Integer> {
+public enum ErrorCodeEnum implements IMappedEnum<Integer> {
 
     GeneralError(0),
     MandatoryField(1),

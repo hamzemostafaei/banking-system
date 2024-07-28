@@ -3,10 +3,11 @@ package com.hamze.banking.system.web.controller;
 import com.hamze.banking.system.core.api.data.CustomerDTO;
 import com.hamze.banking.system.core.api.data.account.AccountDTO;
 import com.hamze.banking.system.core.api.data.account.custom.TransactionRequestDTO;
+import com.hamze.banking.system.core.api.data.account.custom.TransactionTypeEnum;
 import com.hamze.banking.system.core.api.data.account.custom.TransferRequestDTO;
 import com.hamze.banking.system.core.api.data.account.custom.VoucherDTO;
 import com.hamze.banking.system.core.api.exception.CoreServiceException;
-import com.hamze.banking.system.core.api.service.IBankAccountService;
+import com.hamze.banking.system.core.api.service.IAccountService;
 import com.hamze.banking.system.core.api.service.ICustomerService;
 import com.hamze.banking.system.shared.data.base.dto.ErrorDTO;
 import com.hamze.banking.system.shared.data.base.enumeration.ErrorCodeEnum;
@@ -33,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
         produces = MediaType.APPLICATION_JSON_VALUE)
 public class BankAccountController {
 
-    private final IBankAccountService bankAccountService;
+    private final IAccountService accountService;
     private final ICustomerService customerService;
     private final IAccountDTOEdgeResponseMapper accountDTOEdgeResponseMapper;
     private final IGetAccountDetailsEdgeRequestValidator getAccountDetailsEdgeRequestValidator;
@@ -63,7 +64,7 @@ public class BankAccountController {
         account.setOpenAmount(request.getOpenAmount());
 
         try {
-            AccountDTO result = bankAccountService.create(account);
+            AccountDTO result = accountService.create(account);
             AccountEdgeDTO responseData = accountDTOEdgeResponseMapper.objectToEdgeObject(result);
             CustomerDTO holder = customerService.findById(request.getCustomerNumber());
             responseData.setHolder(customerDTOEdgeResponseMapper.objectToEdgeObject(holder));
@@ -103,7 +104,7 @@ public class BankAccountController {
             creditRequest.setAmount(request.getAmount());
             creditRequest.setDescription(request.getDescription());
 
-            VoucherDTO serviceResponse = bankAccountService.credit(creditRequest);
+            VoucherDTO serviceResponse = accountService.doTransaction(TransactionTypeEnum.Credit,creditRequest);
 
             VoucherEdgeDTO responseData = new VoucherEdgeDTO();
             responseData.setTurnoverDate(serviceResponse.getTurnoverDate());
@@ -136,7 +137,7 @@ public class BankAccountController {
             debitRequest.setAmount(request.getAmount());
             debitRequest.setDescription(request.getDescription());
 
-            VoucherDTO serviceResponse = bankAccountService.debit(debitRequest);
+            VoucherDTO serviceResponse = accountService.doTransaction(TransactionTypeEnum.Withdraw,debitRequest);
 
             VoucherEdgeDTO responseData = new VoucherEdgeDTO();
             responseData.setTurnoverDate(serviceResponse.getTurnoverDate());
@@ -165,7 +166,7 @@ public class BankAccountController {
         try {
             TransferRequestDTO transferRequest = getTransferRequestDTO(request);
 
-            VoucherDTO serviceResponse = bankAccountService.transfer(transferRequest);
+            VoucherDTO serviceResponse = accountService.doTransaction(TransactionTypeEnum.Transfer,transferRequest);
             VoucherEdgeDTO responseData = new VoucherEdgeDTO();
             responseData.setTurnoverDate(serviceResponse.getTurnoverDate());
             responseData.setTurnoverNumber(serviceResponse.getTurnoverNumber());
@@ -204,7 +205,7 @@ public class BankAccountController {
                     .body(response);
         }
 
-        AccountDTO serviceResponse = bankAccountService.details(request.getAccountNumber());
+        AccountDTO serviceResponse = accountService.findById(request.getAccountNumber());
 
         if (serviceResponse != null) {
             AccountEdgeDTO responseData = accountDTOEdgeResponseMapper.objectToEdgeObject(serviceResponse);

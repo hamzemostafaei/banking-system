@@ -3,13 +3,14 @@ package com.hamze.banking.system.core.service;
 import com.hamze.banking.system.core.api.criteria.AccountTurnoverCriteria;
 import com.hamze.banking.system.core.api.data.account.AccountDTO;
 import com.hamze.banking.system.core.api.data.account.AccountTurnoverDTO;
+import com.hamze.banking.system.core.api.data.account.custom.EntryNatureEnum;
 import com.hamze.banking.system.core.api.data.account.custom.TransactionRequestDTO;
-import com.hamze.banking.system.core.api.data.account.custom.TransferRequestDTO;
+import com.hamze.banking.system.core.api.data.account.custom.TransactionTypeEnum;
 import com.hamze.banking.system.core.api.data.account.custom.VoucherDTO;
 import com.hamze.banking.system.core.api.exception.CoreServiceException;
+import com.hamze.banking.system.core.api.logging.ITransactionObserver;
 import com.hamze.banking.system.core.api.service.IAccountService;
 import com.hamze.banking.system.core.api.service.IAccountTurnoverService;
-import com.hamze.banking.system.core.api.logging.ITransactionObserver;
 import com.hamze.banking.system.data.access.entity.AccountTurnoverEntity;
 import com.hamze.banking.system.data.access.entity.id.AccountTurnoverEntityId;
 import com.hamze.banking.system.data.access.repository.api.IAccountTurnoverRepository;
@@ -41,21 +42,11 @@ public class AccountTurnoverServiceImpl extends ABaseCoreService<AccountTurnover
     private final IAccountService accountService;
     private final List<ITransactionObserver> observers;
 
-    @Override
-    public VoucherDTO credit(TransactionRequestDTO request) {
-        return addEntry(request, false, "D1001");
-    }
-
-    @Override
-    public VoucherDTO debit(TransactionRequestDTO request) {
-        return addEntry(request, true, "D1002");
-    }
-
-    private VoucherDTO addEntry(TransactionRequestDTO request, boolean isDebit, String transactionType) {
+    public VoucherDTO addEntry(TransactionRequestDTO request, TransactionTypeEnum transactionType,EntryNatureEnum nature) {
         return addEntry(
                 request,
-                isDebit,
                 transactionType,
+                nature,
                 SnowFlakeUniqueIDGenerator.generateNextId(nodeId),
                 new Date(),
                 1
@@ -63,15 +54,15 @@ public class AccountTurnoverServiceImpl extends ABaseCoreService<AccountTurnover
     }
 
     public VoucherDTO addEntry(TransactionRequestDTO request,
-                               boolean isDebit,
-                               String transactionType,
+                               TransactionTypeEnum transactionType,
+                               EntryNatureEnum nature,
                                Long turnoverNumber,
                                Date turnoverDate,
                                Integer entryNumber) {
 
         AccountDTO account = getAndValidateAccount(request.getAccountNumber());
 
-        BigDecimal amount = isDebit ? request.getAmount().negate() : request.getAmount();
+        BigDecimal amount = nature == EntryNatureEnum.Debit ? request.getAmount().negate() : request.getAmount();
 
         AccountTurnoverDTO turnover = createTurnover(
                 request.getDescription(),
@@ -99,27 +90,10 @@ public class AccountTurnoverServiceImpl extends ABaseCoreService<AccountTurnover
         return voucherResponse;
     }
 
-    @Override
-    public VoucherDTO transfer(TransferRequestDTO request) {
-
-        String transactionType = "D1004";
-        Long turnoverNumber = SnowFlakeUniqueIDGenerator.generateNextId(nodeId);
-        Date turnoverDate = new Date();
-
-        addEntry(request.getSource(), true, transactionType,turnoverNumber,turnoverDate,1);
-        addEntry(request.getDestination(), false, transactionType,turnoverNumber,turnoverDate,2);
-
-        VoucherDTO response = new VoucherDTO();
-        response.setTurnoverDate(turnoverDate);
-        response.setTurnoverNumber(turnoverNumber);
-
-        return response;
-    }
-
     private AccountTurnoverDTO createTurnover(String description,
                                               BigDecimal amount,
                                               String accountNumber,
-                                              String transactionType,
+                                              TransactionTypeEnum transactionType,
                                               Long turnoverNumber,
                                               Date turnoverDate,
                                               Integer entryNumber) {
@@ -130,7 +104,7 @@ public class AccountTurnoverServiceImpl extends ABaseCoreService<AccountTurnover
         turnoverId.setEntryNumber(entryNumber);
         turnover.setTurnoverId(turnoverId);
         turnover.setDescription(description);
-        turnover.setTransactionType(transactionType);
+        turnover.setTransactionType(transactionType.getTransactionType());
         turnover.setAmount(amount);
         turnover.setAccountNumber(accountNumber);
         return turnover;
@@ -182,7 +156,7 @@ public class AccountTurnoverServiceImpl extends ABaseCoreService<AccountTurnover
         return newBalance;
     }
 
-    private void notifyObservers(String accountNumber, String transactionType, BigDecimal amount,VoucherDTO voucherResponse) {
+    private void notifyObservers(String accountNumber, TransactionTypeEnum transactionType, BigDecimal amount,VoucherDTO voucherResponse) {
         for (ITransactionObserver observer : observers) {
             observer.onTransaction(accountNumber, transactionType, amount.doubleValue(),voucherResponse);
         }

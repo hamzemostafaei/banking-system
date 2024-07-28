@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-public enum SortDirectionEnum implements IMappedEnum<SortDirectionEnum, Integer> {
+public enum SortDirectionEnum implements IMappedEnum<Integer> {
 
     Asc(0),
     Desc(1);

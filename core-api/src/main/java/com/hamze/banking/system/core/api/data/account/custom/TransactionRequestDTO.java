@@ -6,8 +6,8 @@ import lombok.EqualsAndHashCode;
 import java.math.BigDecimal;
 
 @Data
-@EqualsAndHashCode
-public class TransactionRequestDTO {
+@EqualsAndHashCode(callSuper = false)
+public class TransactionRequestDTO extends ABaseTransactionRequestDTO{
     private String accountNumber;
     private String description;
     private BigDecimal amount;

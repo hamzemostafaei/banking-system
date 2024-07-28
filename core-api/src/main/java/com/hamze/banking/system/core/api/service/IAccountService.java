@@ -2,6 +2,10 @@ package com.hamze.banking.system.core.api.service;
 
 import com.hamze.banking.system.core.api.criteria.AccountCriteria;
 import com.hamze.banking.system.core.api.data.account.AccountDTO;
+import com.hamze.banking.system.core.api.data.account.custom.ABaseTransactionRequestDTO;
+import com.hamze.banking.system.core.api.data.account.custom.TransactionRequestDTO;
+import com.hamze.banking.system.core.api.data.account.custom.TransactionTypeEnum;
+import com.hamze.banking.system.core.api.data.account.custom.VoucherDTO;
 import com.hamze.banking.system.data.access.entity.AccountEntity;
 import com.hamze.banking.system.data.access.repository.api.IAccountRepository;
 
@@ -12,4 +16,5 @@ public interface IAccountService extends ICoreService<AccountDTO,
                                                       IAccountRepository> {
 
     AccountDTO create(AccountDTO request);
+    VoucherDTO doTransaction(TransactionTypeEnum transactionType, ABaseTransactionRequestDTO request);
 }

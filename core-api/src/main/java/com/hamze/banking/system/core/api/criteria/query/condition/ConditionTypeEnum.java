@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-public enum ConditionTypeEnum implements IMappedEnum<ConditionTypeEnum, Integer> {
+public enum ConditionTypeEnum implements IMappedEnum<Integer> {
 
     Equal(0, EqualCondition.class),
     NotEqual(1, NotEqualCondition.class),

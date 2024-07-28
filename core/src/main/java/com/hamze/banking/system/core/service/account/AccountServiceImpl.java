@@ -1,10 +1,17 @@
-package com.hamze.banking.system.core.service;
+package com.hamze.banking.system.core.service.account;
 
 import com.hamze.banking.system.core.api.criteria.AccountCriteria;
 import com.hamze.banking.system.core.api.data.account.AccountDTO;
+import com.hamze.banking.system.core.api.data.account.custom.ABaseTransactionRequestDTO;
+import com.hamze.banking.system.core.api.data.account.custom.TransactionRequestDTO;
+import com.hamze.banking.system.core.api.data.account.custom.TransactionTypeEnum;
+import com.hamze.banking.system.core.api.data.account.custom.VoucherDTO;
 import com.hamze.banking.system.core.api.exception.CoreServiceException;
 import com.hamze.banking.system.core.api.service.IAccountService;
 import com.hamze.banking.system.core.api.service.ICustomerService;
+import com.hamze.banking.system.core.api.service.ITransactionStrategy;
+import com.hamze.banking.system.core.service.ABaseCoreService;
+import com.hamze.banking.system.core.service.account.strategy.TransactionStrategyRegistry;
 import com.hamze.banking.system.data.access.entity.AccountEntity;
 import com.hamze.banking.system.data.access.repository.api.IAccountRepository;
 import com.hamze.banking.system.shared.data.base.dto.ErrorDTO;
@@ -13,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Slf4j
@@ -38,7 +46,26 @@ public class AccountServiceImpl extends ABaseCoreService<AccountDTO,
         request.setStatus(0);
         request.setOpenAmount(request.getOpenAmount());
 
-        return save(request);
+        AccountDTO savedAccount = save(request);
+
+        if (request.getOpenAmount() != null && request.getOpenAmount().compareTo(BigDecimal.ZERO) > 0) {
+            TransactionRequestDTO initialCreditRequest = new TransactionRequestDTO();
+            initialCreditRequest.setDescription("افتتاح سپرده");
+            initialCreditRequest.setAccountNumber(savedAccount.getAccountNumber());
+            initialCreditRequest.setAmount(request.getOpenAmount());
+            doTransaction(TransactionTypeEnum.Open, initialCreditRequest);
+        }
+
+        return savedAccount;
+    }
+
+    @Override
+    public VoucherDTO doTransaction(TransactionTypeEnum transactionType, ABaseTransactionRequestDTO request) {
+        ITransactionStrategy strategy = TransactionStrategyRegistry.getStrategy(transactionType);
+        if (strategy == null) {
+            throw new UnsupportedOperationException(String.format("Transaction type not supported: %s", transactionType));
+        }
+        return strategy.doTransaction(request);
     }
 
     private void checkCustomerExistence(AccountDTO account) {
