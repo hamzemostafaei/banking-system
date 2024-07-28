@@ -6,6 +6,7 @@ import com.hamze.banking.system.shared.data.base.enumeration.ErrorCodeEnum;
 import java.math.BigDecimal;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("unused")
 public final class ValidationUtil {
 
     private static final Pattern TRACKING_NUMBER_PATTERN = Pattern.compile("^[\\w\\-:.]{8,64}$");
@@ -37,15 +38,15 @@ public final class ValidationUtil {
         return validateAccountNumber(accountNumber, "accountNumber", true);
     }
 
-    public static ErrorDTO validateAmount(BigDecimal amount){
-        return validateAmount(amount,"amount");
+    public static ErrorDTO validateAmount(BigDecimal amount) {
+        return validateAmount(amount, "amount");
     }
 
-    public static ErrorDTO validateAmount(BigDecimal amount,String fieldName){
-        return validateAmount(amount,fieldName,true);
+    public static ErrorDTO validateAmount(BigDecimal amount, String fieldName) {
+        return validateAmount(amount, fieldName, true);
     }
 
-    public static ErrorDTO validateAmount(BigDecimal amount,String fieldName,boolean mandatory){
+    public static ErrorDTO validateAmount(BigDecimal amount, String fieldName, boolean mandatory) {
         if (mandatory && amount == null) {
             return new ErrorDTO(ErrorCodeEnum.MandatoryField, "MandatoryFieldNotSet", fieldName);
         }
@@ -77,10 +78,10 @@ public final class ValidationUtil {
     }
 
     public static ErrorDTO validateNationalCode(String nationalCode) {
-        return validateNationalCode(nationalCode,"nationalId");
+        return validateNationalCode(nationalCode, "nationalId");
     }
 
-    public static ErrorDTO validateNationalCode(String nationalCode,String fieldName) {
+    public static ErrorDTO validateNationalCode(String nationalCode, String fieldName) {
 
         if (nationalCode == null) {
             return new ErrorDTO(ErrorCodeEnum.MandatoryField, "MandatoryFieldNotSet", fieldName);
@@ -117,6 +118,18 @@ public final class ValidationUtil {
                 return new ErrorDTO(ErrorCodeEnum.DataFormatMismatch, "DataFormatMismatch", fieldName);
             }
         }
+    }
+
+    public static ErrorDTO validateCustomerNumber(Integer customerNumber) {
+        if (customerNumber == null) {
+            return new ErrorDTO(ErrorCodeEnum.MandatoryField, "MandatoryFieldNotSet", "customerNumber");
+        }
+
+        if (customerNumber == 0 || customerNumber > 99999999) {
+            return new ErrorDTO(ErrorCodeEnum.DataFormatMismatch, "DataFormatMismatch", "customerNumber");
+        }
+
+        return null;
     }
 
 }

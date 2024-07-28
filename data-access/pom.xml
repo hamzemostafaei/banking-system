@@ -71,8 +71,7 @@
         <!-- DB -->
         <!--<dependency>
             <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc8</artifactId>
-            <scope>provided</scope>
+            <artifactId>ojdbc11</artifactId>
         </dependency>-->
         <dependency>
             <groupId>com.h2database</groupId>

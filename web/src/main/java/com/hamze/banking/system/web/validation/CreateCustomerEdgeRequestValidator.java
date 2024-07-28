@@ -18,6 +18,7 @@ public class CreateCustomerEdgeRequestValidator extends ABaseEdgeRequestValidato
             return false;
         }
 
+        handleValidation(ValidationUtil.validateCustomerNumber(request.getCustomerNumber()),response);
         handleValidation(ValidationUtil.validateMandatory(request.getFirstName(), "firstName"), response);
         handleValidation(ValidationUtil.validateMandatory(request.getLastName(), "lastName"), response);
         handleValidation(ValidationUtil.validateNationalCode(request.getNationalId(), "nationalId"), response);

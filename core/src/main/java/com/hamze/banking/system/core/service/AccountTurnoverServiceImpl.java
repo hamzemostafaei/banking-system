@@ -80,11 +80,12 @@ public class AccountTurnoverServiceImpl extends ABaseCoreService<AccountTurnover
                 entryNumber
         );
 
+        BigDecimal initialBal = account.getBalance() != null ? account.getBalance() : BigDecimal.ZERO;
         BigDecimal newBalance = calculateBalance(account, amount);
         turnover.setEntryBalance(newBalance);
         account.setBalance(newBalance);
 
-        saveTurnoverAndAccount(turnover, account, accountService);
+        saveTurnoverAndAccount(initialBal,turnover, account);
         return createVoucherResponse(turnover);
     }
 
@@ -125,9 +126,17 @@ public class AccountTurnoverServiceImpl extends ABaseCoreService<AccountTurnover
         return turnover;
     }
 
-    private void saveTurnoverAndAccount(AccountTurnoverDTO turnover, AccountDTO account, IAccountService bankAccountService) {
+    private void saveTurnoverAndAccount(BigDecimal initialBal,AccountTurnoverDTO turnover, AccountDTO account) {
+        AccountDTO finalAccount = accountService.findById(account.getAccountNumber());
+        if (finalAccount.getBalance() != null && finalAccount.getBalance().compareTo(initialBal) != 0) {
+            String message = String.format("Account balance of account [%s] modified by another instance", account.getAccountNumber());
+            throw CoreServiceException.builder()
+                    .message(message)
+                    .error(new ErrorDTO(ErrorCodeEnum.InconsistentData, message, "AccountBalance"))
+                    .build();
+        }
         save(turnover);
-        bankAccountService.save(account);
+        accountService.save(account);
     }
 
     private VoucherDTO createVoucherResponse(AccountTurnoverDTO turnover) {
