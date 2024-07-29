@@ -155,7 +155,7 @@
     </logger>
 
     <logger name="com.hamze.banking.system.transactions.log" additivity="false">
-        <level value="off"/>
+        <level value="info"/>
         <appender-ref ref="STDOUT"/>
     </logger>
 

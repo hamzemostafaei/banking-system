@@ -8,7 +8,6 @@ import com.hamze.banking.system.core.api.data.account.custom.TransactionRequestD
 import com.hamze.banking.system.core.api.data.account.custom.TransactionTypeEnum;
 import com.hamze.banking.system.core.api.data.account.custom.VoucherDTO;
 import com.hamze.banking.system.core.api.exception.CoreServiceException;
-import com.hamze.banking.system.core.api.logging.ITransactionObserver;
 import com.hamze.banking.system.core.api.service.IAccountService;
 import com.hamze.banking.system.core.api.service.IAccountTurnoverService;
 import com.hamze.banking.system.data.access.entity.AccountTurnoverEntity;
@@ -24,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,7 +38,6 @@ public class AccountTurnoverServiceImpl extends ABaseCoreService<AccountTurnover
     private Long nodeId;
 
     private final IAccountService accountService;
-    private final List<ITransactionObserver> observers;
 
     public VoucherDTO addEntry(TransactionRequestDTO request, TransactionTypeEnum transactionType,EntryNatureEnum nature) {
         return addEntry(
@@ -81,13 +78,7 @@ public class AccountTurnoverServiceImpl extends ABaseCoreService<AccountTurnover
 
         saveTurnoverAndAccount(initialBal,turnover, account);
 
-        // Notify observers after processing the transaction
-
-        VoucherDTO voucherResponse = createVoucherResponse(turnover);
-
-        notifyObservers(account.getAccountNumber(), transactionType, amount,voucherResponse);
-
-        return voucherResponse;
+        return createVoucherResponse(turnover);
     }
 
     private AccountTurnoverDTO createTurnover(String description,
@@ -154,11 +145,5 @@ public class AccountTurnoverServiceImpl extends ABaseCoreService<AccountTurnover
                     .build();
         }
         return newBalance;
-    }
-
-    private void notifyObservers(String accountNumber, TransactionTypeEnum transactionType, BigDecimal amount,VoucherDTO voucherResponse) {
-        for (ITransactionObserver observer : observers) {
-            observer.onTransaction(accountNumber, transactionType, amount.doubleValue(),voucherResponse);
-        }
     }
 }

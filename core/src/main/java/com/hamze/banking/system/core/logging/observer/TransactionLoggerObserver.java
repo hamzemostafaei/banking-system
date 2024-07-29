@@ -1,5 +1,6 @@
 package com.hamze.banking.system.core.logging.observer;
 
+import com.hamze.banking.system.core.api.data.account.custom.ABaseTransactionRequestDTO;
 import com.hamze.banking.system.core.api.data.account.custom.TransactionTypeEnum;
 import com.hamze.banking.system.core.api.data.account.custom.VoucherDTO;
 import com.hamze.banking.system.core.api.logging.ITransactionObserver;
@@ -13,9 +14,9 @@ public class TransactionLoggerObserver implements ITransactionObserver {
     private final Logger logger = LoggerFactory.getLogger("com.hamze.banking.system.transactions.log");
 
     @Override
-    public void onTransaction(String accountNumber, TransactionTypeEnum transactionType, double amount, VoucherDTO voucherResponse) {
+    public void onTransaction(ABaseTransactionRequestDTO request, TransactionTypeEnum transactionType, VoucherDTO voucherResponse) {
         if (logger.isInfoEnabled()) {
-            logger.info("accountNumber: {}, transactionType: {}, amount: {}, voucherResponse:{}", accountNumber, transactionType, amount, voucherResponse);
+            logger.info("transactionType: {}, request: {}, voucherResponse:{}", transactionType, request, voucherResponse);
         }
     }
 }

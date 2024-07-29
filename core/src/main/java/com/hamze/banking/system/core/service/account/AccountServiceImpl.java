@@ -7,6 +7,7 @@ import com.hamze.banking.system.core.api.data.account.custom.TransactionRequestD
 import com.hamze.banking.system.core.api.data.account.custom.TransactionTypeEnum;
 import com.hamze.banking.system.core.api.data.account.custom.VoucherDTO;
 import com.hamze.banking.system.core.api.exception.CoreServiceException;
+import com.hamze.banking.system.core.api.logging.ITransactionObserver;
 import com.hamze.banking.system.core.api.service.IAccountService;
 import com.hamze.banking.system.core.api.service.ICustomerService;
 import com.hamze.banking.system.core.api.service.ITransactionStrategy;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,6 +36,7 @@ public class AccountServiceImpl extends ABaseCoreService<AccountDTO,
         implements IAccountService {
 
     private final ICustomerService customerService;
+    private final List<ITransactionObserver> observers;
 
     @Override
     public AccountDTO create(AccountDTO request) {
@@ -65,7 +68,12 @@ public class AccountServiceImpl extends ABaseCoreService<AccountDTO,
         if (strategy == null) {
             throw new UnsupportedOperationException(String.format("Transaction type not supported: %s", transactionType));
         }
-        return strategy.doTransaction(request);
+        VoucherDTO response = strategy.doTransaction(request);
+
+        // Notify observers after processing the transaction
+        notifyObservers(request, transactionType, response);
+
+        return response;
     }
 
     private void checkCustomerExistence(AccountDTO account) {
@@ -86,6 +94,12 @@ public class AccountServiceImpl extends ABaseCoreService<AccountDTO,
                     .message(message)
                     .error(new ErrorDTO(ErrorCodeEnum.DuplicateData, message, "Account"))
                     .build();
+        }
+    }
+
+    private void notifyObservers(ABaseTransactionRequestDTO request, TransactionTypeEnum transactionType, VoucherDTO voucherResponse) {
+        for (ITransactionObserver observer : observers) {
+            observer.onTransaction(request, transactionType, voucherResponse);
         }
     }
 }
