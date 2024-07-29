@@ -75,6 +75,7 @@ public class BankAccountController {
                     .badRequest()
                     .body(response);
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             response.addError(new ErrorDTO(ErrorCodeEnum.InternalServiceError, e.getMessage()));
             return ResponseEntity
                     .internalServerError()
@@ -115,6 +116,7 @@ public class BankAccountController {
             response.setErrors(e.getErrors());
             return ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             response.addError(new ErrorDTO(ErrorCodeEnum.InternalServiceError, "DepositBankAccount"));
             return ResponseEntity.internalServerError().body(response);
         }
@@ -148,6 +150,7 @@ public class BankAccountController {
             response.setErrors(e.getErrors());
             return ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             response.addError(new ErrorDTO(ErrorCodeEnum.InternalServiceError, "WithdrawBankAccount"));
             return ResponseEntity.internalServerError().body(response);
         }
@@ -176,6 +179,7 @@ public class BankAccountController {
             response.setErrors(e.getErrors());
             return ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             response.addError(new ErrorDTO(ErrorCodeEnum.InternalServiceError, "Transfer"));
             return ResponseEntity.internalServerError().body(response);
         }
