@@ -9,17 +9,17 @@ import com.hamze.banking.system.core.api.service.ITransactionStrategy;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CreateTransactionStrategy implements ITransactionStrategy<TransactionRequestDTO> {
+public class DepositTransactionStrategy implements ITransactionStrategy<TransactionRequestDTO> {
 
     private final IAccountTurnoverService accountTurnoverService;
 
-    public CreateTransactionStrategy(IAccountTurnoverService accountTurnoverService) {
+    public DepositTransactionStrategy(IAccountTurnoverService accountTurnoverService) {
         this.accountTurnoverService = accountTurnoverService;
-        TransactionStrategyRegistry.register(TransactionTypeEnum.Open,this);
+        TransactionStrategyRegistry.register(TransactionTypeEnum.Deposit,this);
     }
 
     @Override
     public VoucherDTO doTransaction(TransactionRequestDTO transactionRequest) {
-        return accountTurnoverService.addEntry(transactionRequest, TransactionTypeEnum.Open, EntryNatureEnum.Credit);
+        return accountTurnoverService.addEntry(transactionRequest, TransactionTypeEnum.Deposit, EntryNatureEnum.Credit);
     }
 }

@@ -7,11 +7,11 @@ import com.hamze.banking.system.data.access.entity.ABaseEntity;
 import org.springframework.stereotype.Component;
 
 @Component("EqualPredicate")
-public class EqualPredicateFactory<E extends ABaseEntity,
-                                   T extends IGenericConditionItem<?>>
-        implements IPredicateFactory<E, T> {
+public class EqualPredicate<E extends ABaseEntity,
+                            T extends IGenericConditionItem<?>>
+        implements IPredicate<E, T> {
 
-    public EqualPredicateFactory() {
+    public EqualPredicate() {
         PredicateFactoryRegistry.register(ConditionTypeEnum.Equal,this);
     }
     @Override

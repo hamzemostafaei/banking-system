@@ -11,11 +11,12 @@ public class TransactionStrategyRegistry {
 
     private static final Map<TransactionTypeEnum, ITransactionStrategy<? extends ABaseTransactionRequestDTO>> registry = new ConcurrentHashMap<>();
 
-    public static void register(TransactionTypeEnum transactionType, ITransactionStrategy<? extends ABaseTransactionRequestDTO> strategy) {
+    public static <T extends ABaseTransactionRequestDTO> void register(TransactionTypeEnum transactionType, ITransactionStrategy<T> strategy) {
         registry.put(transactionType, strategy);
     }
 
-    public static ITransactionStrategy<? extends ABaseTransactionRequestDTO> getStrategy(TransactionTypeEnum transactionType) {
-        return registry.get(transactionType);
+    @SuppressWarnings("unchecked")
+    public static <T extends ABaseTransactionRequestDTO> ITransactionStrategy<T> getStrategy(TransactionTypeEnum transactionType) {
+        return (ITransactionStrategy<T>) registry.get(transactionType);
     }
 }

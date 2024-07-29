@@ -9,11 +9,11 @@ import com.hamze.banking.system.core.api.service.ITransactionStrategy;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DebitTransactionStrategy implements ITransactionStrategy<TransactionRequestDTO> {
+public class WithdrawTransactionStrategy implements ITransactionStrategy<TransactionRequestDTO> {
 
     private final IAccountTurnoverService accountTurnoverService;
 
-    public DebitTransactionStrategy(IAccountTurnoverService accountTurnoverService) {
+    public WithdrawTransactionStrategy(IAccountTurnoverService accountTurnoverService) {
         this.accountTurnoverService = accountTurnoverService;
         TransactionStrategyRegistry.register(TransactionTypeEnum.Withdraw, this);
     }

@@ -7,11 +7,11 @@ import com.hamze.banking.system.data.access.entity.ABaseEntity;
 import org.springframework.stereotype.Component;
 
 @Component("GreaterThanOrEqualToPredicate")
-public class GreaterThanOrEqualToPredicateFactory<E extends ABaseEntity,
-                                                  T extends IGenericConditionItem<?>>
-        implements IPredicateFactory<E, T> {
+public class GreaterThanOrEqualToPredicate<E extends ABaseEntity,
+                                           T extends IGenericConditionItem<?>>
+        implements IPredicate<E, T> {
 
-    public GreaterThanOrEqualToPredicateFactory() {
+    public GreaterThanOrEqualToPredicate() {
         PredicateFactoryRegistry.register(ConditionTypeEnum.GreaterThanOrEqualTo,this);
     }
     @Override

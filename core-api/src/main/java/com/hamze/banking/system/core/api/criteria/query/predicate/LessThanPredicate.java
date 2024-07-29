@@ -6,17 +6,16 @@ import com.hamze.banking.system.core.api.criteria.query.condition.IGenericCondit
 import com.hamze.banking.system.data.access.entity.ABaseEntity;
 import org.springframework.stereotype.Component;
 
-@Component("NotEqualPredicate")
-public class NotEqualPredicateFactory<E extends ABaseEntity,
-                                      T extends IGenericConditionItem<?>>
-        implements IPredicateFactory<E, T> {
+@Component("LessThanPredicate")
+public class LessThanPredicate<E extends ABaseEntity, T extends IGenericConditionItem<?>> implements IPredicate<E, T> {
 
-    public NotEqualPredicateFactory() {
-        PredicateFactoryRegistry.register(ConditionTypeEnum.NotEqual,this);
+    public LessThanPredicate() {
+        PredicateFactoryRegistry.register(ConditionTypeEnum.LessThan, this);
     }
+
     @Override
     public CriteriaBuilder<E> buildPredicate(CriteriaBuilder<E> cb, String fieldName, T condition) {
-       return cb.where(fieldName).notEq(condition.getConditionData());
+        return cb.where(fieldName).lt(condition.getConditionData());
     }
 
 }

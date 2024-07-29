@@ -6,18 +6,15 @@ import com.hamze.banking.system.core.api.criteria.query.condition.IGenericCondit
 import com.hamze.banking.system.data.access.entity.ABaseEntity;
 import org.springframework.stereotype.Component;
 
-@Component("RegexpLikePredicate")
-public class RegexpLikePredicateFactory<E extends ABaseEntity,
-                                        T extends IGenericConditionItem<?>>
-        implements IPredicateFactory<E, T> {
+@Component("LikePredicate")
+public class LikePredicate<E extends ABaseEntity, T extends IGenericConditionItem<?>> implements IPredicate<E, T> {
 
-    public RegexpLikePredicateFactory() {
-        PredicateFactoryRegistry.register(ConditionTypeEnum.RegexpLike,this);
+    public LikePredicate() {
+        PredicateFactoryRegistry.register(ConditionTypeEnum.Like, this);
     }
 
     @Override
     public CriteriaBuilder<E> buildPredicate(CriteriaBuilder<E> cb, String fieldName, T condition) {
-        //TODO should be implemented
-        throw new RuntimeException("Is not implemented");
+        return cb.where(fieldName).like().value(condition.getConditionData()).noEscape();
     }
 }

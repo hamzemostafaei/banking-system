@@ -7,16 +7,14 @@ import com.hamze.banking.system.data.access.entity.ABaseEntity;
 import org.springframework.stereotype.Component;
 
 @Component("NotNullPredicate")
-public class NotNullPredicateFactory<E extends ABaseEntity,
-                                     T extends IGenericConditionItem<?>>
-        implements INullPredicateFactory<E, T> {
+public class NotNullPredicate<E extends ABaseEntity, T extends IGenericConditionItem<?>> implements INullPredicate<E, T> {
 
-    public NotNullPredicateFactory() {
-        PredicateFactoryRegistry.register(ConditionTypeEnum.NotNull,this);
+    public NotNullPredicate() {
+        PredicateFactoryRegistry.register(ConditionTypeEnum.NotNull, this);
     }
 
     @Override
-    public CriteriaBuilder<E> buildPredicate(CriteriaBuilder<E> cb, String fieldName)throws IllegalArgumentException {
-       return cb.where(fieldName).isNotNull();
+    public CriteriaBuilder<E> buildPredicate(CriteriaBuilder<E> cb, String fieldName) throws IllegalArgumentException {
+        return cb.where(fieldName).isNotNull();
     }
 }

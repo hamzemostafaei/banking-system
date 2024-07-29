@@ -8,11 +8,11 @@ import com.hamze.banking.system.data.access.entity.ABaseEntity;
 import org.springframework.stereotype.Component;
 
 @Component("BetweenPredicate")
-public class BetweenPredicateFactory<E extends ABaseEntity,
-                                     T extends IGenericConditionItem<BetweenCriteriaDTO<?, ?>>>
-                                     implements IPredicateFactory<E, T> {
+public class BetweenPredicate<E extends ABaseEntity,
+                              T extends IGenericConditionItem<BetweenCriteriaDTO<?, ?>>>
+        implements IPredicate<E, T> {
 
-    public BetweenPredicateFactory() {
+    public BetweenPredicate() {
         PredicateFactoryRegistry.register(ConditionTypeEnum.Between, this);
     }
 

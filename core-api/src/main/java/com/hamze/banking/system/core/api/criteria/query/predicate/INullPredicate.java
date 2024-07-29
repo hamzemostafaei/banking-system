@@ -4,9 +4,9 @@ import com.blazebit.persistence.CriteriaBuilder;
 import com.hamze.banking.system.core.api.criteria.query.condition.IGenericConditionItem;
 import com.hamze.banking.system.data.access.entity.ABaseEntity;
 
-public interface INullPredicateFactory<E extends ABaseEntity,
-                                       T extends IGenericConditionItem<?>>
-        extends IPredicateFactory<E, T> {
+public interface INullPredicate<E extends ABaseEntity,
+                                T extends IGenericConditionItem<?>>
+        extends IPredicate<E, T> {
 
     CriteriaBuilder<E> buildPredicate(CriteriaBuilder<E> cb, String fieldName);
 

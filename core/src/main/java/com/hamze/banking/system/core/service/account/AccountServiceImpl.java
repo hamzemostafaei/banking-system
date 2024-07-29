@@ -61,7 +61,7 @@ public class AccountServiceImpl extends ABaseCoreService<AccountDTO,
 
     @Override
     public VoucherDTO doTransaction(TransactionTypeEnum transactionType, ABaseTransactionRequestDTO request) {
-        ITransactionStrategy strategy = TransactionStrategyRegistry.getStrategy(transactionType);
+        ITransactionStrategy<ABaseTransactionRequestDTO> strategy = TransactionStrategyRegistry.getStrategy(transactionType);
         if (strategy == null) {
             throw new UnsupportedOperationException(String.format("Transaction type not supported: %s", transactionType));
         }

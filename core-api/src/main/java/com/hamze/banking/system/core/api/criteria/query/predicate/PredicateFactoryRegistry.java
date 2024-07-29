@@ -5,20 +5,18 @@ import com.hamze.banking.system.core.api.criteria.query.condition.ConditionTypeE
 import com.hamze.banking.system.core.api.criteria.query.condition.IGenericConditionItem;
 import com.hamze.banking.system.data.access.entity.ABaseEntity;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PredicateFactoryRegistry {
-    private static final Map<ConditionTypeEnum, IPredicateFactory<? extends ABaseEntity, ? extends IGenericConditionItem<?>>> builderMap = new HashMap<>();
+    private static final Map<ConditionTypeEnum, IPredicate<? extends ABaseEntity, ? extends IGenericConditionItem<?>>> registry = new ConcurrentHashMap<>();
 
-    public static synchronized void register(ConditionTypeEnum conditionType,
-                                             IPredicateFactory<? extends ABaseEntity, ? extends IGenericConditionItem<?>> conditionItem) {
-
-        builderMap.putIfAbsent(conditionType, conditionItem);
+    public static void register(ConditionTypeEnum conditionType, IPredicate<? extends ABaseEntity, ? extends IGenericConditionItem<?>> conditionItem) {
+        registry.putIfAbsent(conditionType, conditionItem);
     }
 
     @SuppressWarnings("unchecked")
-    public static <E extends ABaseEntity, T extends IGenericConditionItem<?>> IPredicateFactory<E, T> getBuilder(ConditionTypeEnum conditionType) {
-        return (IPredicateFactory<E, T>) builderMap.get(conditionType);
+    public static <E extends ABaseEntity, T extends IGenericConditionItem<?>> IPredicate<E, T> getPredicate(ConditionTypeEnum conditionType) {
+        return (IPredicate<E, T>) registry.get(conditionType);
     }
 }

@@ -4,19 +4,18 @@ import com.blazebit.persistence.CriteriaBuilder;
 import com.hamze.banking.system.core.api.criteria.query.condition.ConditionTypeEnum;
 import com.hamze.banking.system.core.api.criteria.query.condition.IGenericConditionItem;
 import com.hamze.banking.system.data.access.entity.ABaseEntity;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Component;
 
-@Component("LessThanOrEqualToPredicate")
-public class LessThanOrEqualToPredicateFactory<E extends ABaseEntity,
-                                               T extends IGenericConditionItem<?>>
-        implements IPredicateFactory<E, T> {
+@Component("NotRegexpLikePredicate")
+public class NotRegexpLikePredicate<E extends ABaseEntity, T extends IGenericConditionItem<?>> implements IPredicate<E, T> {
 
-    public LessThanOrEqualToPredicateFactory() {
-        PredicateFactoryRegistry.register(ConditionTypeEnum.LessThanOrEqualTo,this);
+    public NotRegexpLikePredicate() {
+        PredicateFactoryRegistry.register(ConditionTypeEnum.NotRegexpLike, this);
     }
+
     @Override
     public CriteriaBuilder<E> buildPredicate(CriteriaBuilder<E> cb, String fieldName, T condition) {
-       return cb.where(fieldName).le(condition.getConditionData());
+        throw new NotImplementedException("Is not implemented");
     }
-
 }

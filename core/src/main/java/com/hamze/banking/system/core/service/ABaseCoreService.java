@@ -8,7 +8,7 @@ import com.hamze.banking.system.core.api.criteria.SortDirectionEnum;
 import com.hamze.banking.system.core.api.criteria.query.condition.Condition;
 import com.hamze.banking.system.core.api.criteria.query.condition.ConditionTypeEnum;
 import com.hamze.banking.system.core.api.criteria.query.condition.IGenericConditionItem;
-import com.hamze.banking.system.core.api.criteria.query.predicate.IPredicateFactory;
+import com.hamze.banking.system.core.api.criteria.query.predicate.IPredicate;
 import com.hamze.banking.system.core.api.criteria.query.predicate.PredicateFactoryRegistry;
 import com.hamze.banking.system.core.api.data.ABaseDTO;
 import com.hamze.banking.system.core.api.exception.BadSortColumnNameException;
@@ -287,7 +287,7 @@ public abstract class ABaseCoreService<D extends ABaseDTO,
                 Object value = ReflectionUtil.getValue(criteriaClass, fieldName, criteria);
 
                 if (ObjectUtils.isNotEmpty(value)) {
-                    IPredicateFactory<E, IGenericConditionItem<?>> predicateBuilder = PredicateFactoryRegistry.getBuilder(conditionType);
+                    IPredicate<E, IGenericConditionItem<?>> predicateBuilder = PredicateFactoryRegistry.getPredicate(conditionType);
                     if (ObjectUtils.isNotEmpty(predicateBuilder)) {
                         predicateBuilder.buildPredicate(criteriaBuilder, conditionFieldName, getConditionItem(value, conditionType));
                     }

@@ -6,18 +6,15 @@ import com.hamze.banking.system.core.api.criteria.query.condition.IGenericCondit
 import com.hamze.banking.system.data.access.entity.ABaseEntity;
 import org.springframework.stereotype.Component;
 
-@Component("NotRegexpLikePredicate")
-public class NotRegexpLikePredicateFactory<E extends ABaseEntity,
-                                           T extends IGenericConditionItem<?>>
-        implements IPredicateFactory<E, T> {
+@Component("NotLikePredicate")
+public class NotLikePredicate<E extends ABaseEntity, T extends IGenericConditionItem<?>> implements IPredicate<E, T> {
 
-    public NotRegexpLikePredicateFactory() {
-        PredicateFactoryRegistry.register(ConditionTypeEnum.NotRegexpLike,this);
+    public NotLikePredicate() {
+        PredicateFactoryRegistry.register(ConditionTypeEnum.NotLike, this);
     }
 
     @Override
     public CriteriaBuilder<E> buildPredicate(CriteriaBuilder<E> cb, String fieldName, T condition) {
-        //TODO should be implemented
-        throw new RuntimeException("Is not implemented");
+        return cb.where(fieldName).notLike().value(condition.getConditionData()).noEscape();
     }
 }
