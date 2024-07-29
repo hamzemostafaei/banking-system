@@ -104,7 +104,7 @@ public class BankAccountController {
             creditRequest.setAmount(request.getAmount());
             creditRequest.setDescription(request.getDescription());
 
-            VoucherDTO serviceResponse = accountService.doTransaction(TransactionTypeEnum.Credit,creditRequest);
+            VoucherDTO serviceResponse = accountService.doTransaction(TransactionTypeEnum.Deposit,creditRequest);
 
             VoucherEdgeDTO responseData = new VoucherEdgeDTO();
             responseData.setTurnoverDate(serviceResponse.getTurnoverDate());
