@@ -15,6 +15,8 @@ import com.hamze.banking.system.web.api.mapper.ICustomerDTOEdgeResponseMapper;
 import com.hamze.banking.system.web.api.validation.ICreateCustomerEdgeRequestValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +27,7 @@ import java.util.Date;
 @RequestMapping("/customer")
 public class CustomerController {
 
+    private static final Logger log = LoggerFactory.getLogger(CustomerController.class);
     private final ICustomerService customerService;
     private final ICreateCustomerEdgeRequestValidator createCustomerEdgeRequestValidator;
     private final ICustomerDTOEdgeResponseMapper customerDTOEdgeResponseMapper;
@@ -55,6 +58,7 @@ public class CustomerController {
             response.setErrors(e.getErrors());
             return ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             response.addError(new ErrorDTO(ErrorCodeEnum.InternalServiceError, "CreateCustomer"));
             return ResponseEntity.internalServerError().body(response);
         }
@@ -84,6 +88,7 @@ public class CustomerController {
 
             response.setData(customerDTOEdgeResponseMapper.objectToEdgeObject(serviceResponse));
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             response.addError(new ErrorDTO(ErrorCodeEnum.InternalServiceError, "CreateCustomer"));
             return ResponseEntity.internalServerError().body(response);
         }
