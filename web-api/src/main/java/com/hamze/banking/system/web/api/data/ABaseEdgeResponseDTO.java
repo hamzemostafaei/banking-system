@@ -19,8 +19,8 @@ public abstract class ABaseEdgeResponseDTO extends ABaseEdgeRequestDTO {
     @JsonProperty("registrationDate")
     private Date registrationDate;
 
-    @JsonProperty("status")
-    private ServiceStatusEnum status;
+    @JsonProperty("serviceStatus")
+    private ServiceStatusEnum serviceStatus;
 
     @JsonProperty("message")
     private String message;
@@ -40,7 +40,7 @@ public abstract class ABaseEdgeResponseDTO extends ABaseEdgeRequestDTO {
         this.errors = errors;
 
         if (!CollectionUtils.isEmpty(errors)) {
-            setStatus(ServiceStatusEnum.Unsuccessful);
+            setServiceStatus(ServiceStatusEnum.Unsuccessful);
         }
     }
 
@@ -52,7 +52,7 @@ public abstract class ABaseEdgeResponseDTO extends ABaseEdgeRequestDTO {
             getErrors().add(error);
         }
 
-        setStatus(ServiceStatusEnum.Unsuccessful);
+        setServiceStatus(ServiceStatusEnum.Unsuccessful);
     }
 
     public boolean hasError() {

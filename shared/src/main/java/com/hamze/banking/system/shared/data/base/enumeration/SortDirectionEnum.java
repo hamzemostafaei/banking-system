@@ -1,12 +1,11 @@
-package com.hamze.banking.system.core.api.criteria;
+package com.hamze.banking.system.shared.data.base.enumeration;
 
-import com.hamze.banking.system.shared.data.base.enumeration.IMappedEnum;
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Getter
 public enum SortDirectionEnum implements IMappedEnum<Integer> {
 
     Asc(0),
@@ -26,6 +25,7 @@ public enum SortDirectionEnum implements IMappedEnum<Integer> {
         this.code = code;
     }
 
+    @JsonCreator
     public static SortDirectionEnum getByValue(Integer code) {
         if (code == null) {
             return null;
@@ -37,6 +37,11 @@ public enum SortDirectionEnum implements IMappedEnum<Integer> {
         }
 
         return value;
+    }
+
+    @JsonValue
+    public int getCode() {
+        return code;
     }
 
     @Override

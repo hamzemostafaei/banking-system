@@ -1,5 +1,6 @@
 package com.hamze.banking.system.data.access.enumeration;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.hamze.banking.system.shared.data.base.enumeration.IMappedEnum;
 import lombok.Getter;
 
@@ -21,6 +22,7 @@ public enum AccountStatusEnum implements IMappedEnum<Integer> {
         }
     }
 
+    @JsonValue
     private final Integer status;
 
     AccountStatusEnum(Integer status) {

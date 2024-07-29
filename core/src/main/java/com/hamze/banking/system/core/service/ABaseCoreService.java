@@ -4,7 +4,6 @@ import com.blazebit.persistence.CriteriaBuilder;
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.hamze.banking.system.core.api.criteria.ISearchCriteria;
 import com.hamze.banking.system.core.api.criteria.SortDTO;
-import com.hamze.banking.system.core.api.criteria.SortDirectionEnum;
 import com.hamze.banking.system.core.api.criteria.query.condition.Condition;
 import com.hamze.banking.system.core.api.criteria.query.condition.ConditionTypeEnum;
 import com.hamze.banking.system.core.api.criteria.query.condition.IGenericConditionItem;
@@ -15,6 +14,7 @@ import com.hamze.banking.system.core.api.exception.BadSortColumnNameException;
 import com.hamze.banking.system.core.api.mapper.IEntityMapper;
 import com.hamze.banking.system.core.api.service.ICoreService;
 import com.hamze.banking.system.data.access.entity.ABaseEntity;
+import com.hamze.banking.system.shared.data.base.enumeration.SortDirectionEnum;
 import com.hamze.banking.system.shared.util.ReflectionUtil;
 import jakarta.persistence.*;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,10 @@ import org.springframework.util.CollectionUtils;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service("ABaseCoreService")
@@ -168,16 +171,16 @@ public abstract class ABaseCoreService<D extends ABaseDTO,
         List<E> resultList;
         PageImpl<D> result = null;
 
+        long totalResults;
+        if (BooleanUtils.isTrue(criteria.getReturnTotalSize())) {
+            totalResults = criteriaBuilder.getCountQuery().getSingleResult();
+        } else {
+            totalResults = -1;
+        }
+
         if (ObjectUtils.isNotEmpty(criteria.getOffset()) && ObjectUtils.isNotEmpty(criteria.getPageSize())) {
             int offset = criteria.getOffset();
             int pageSize = criteria.getPageSize();
-
-            long totalResults;
-            if (BooleanUtils.isTrue(criteria.getReturnTotalSize())) {
-                totalResults = criteriaBuilder.getCountQuery().getSingleResult();
-            } else {
-                totalResults = -1;
-            }
 
             criteriaBuilder.setFirstResult(offset * pageSize);
             criteriaBuilder.setMaxResults(pageSize);
@@ -233,7 +236,7 @@ public abstract class ABaseCoreService<D extends ABaseDTO,
                 }
             }
             return sortItems;
-        } else if (ObjectUtils.isNotEmpty(criteria.getOffset()) && ObjectUtils.isNotEmpty(criteria.getPageSize())) {
+        } else {
             sortItems = new ArrayList<>(getFieldNames().size());
             for (String entityFieldName : getFieldNames()) {
                 Id id = ReflectionUtil.getFieldAnnotation(entityClass, entityFieldName, Id.class);
@@ -249,8 +252,9 @@ public abstract class ABaseCoreService<D extends ABaseDTO,
                             Column idFieldColumn =
                                     ReflectionUtil.getFieldAnnotation(idClass, idFieldName, Column.class);
                             if (ObjectUtils.isNotEmpty(idFieldColumn)) {
-                                criteriaBuilder.orderByAsc(idFieldName);
-                                sortItems.add(new Sort.Order(Sort.Direction.ASC, idFieldName));
+                                String columnName = String.format("%s.%s", entityFieldName, idFieldName);
+                                criteriaBuilder.orderByAsc(columnName);
+                                sortItems.add(new Sort.Order(Sort.Direction.ASC, columnName));
                             }
                         }
                         break;
@@ -259,7 +263,6 @@ public abstract class ABaseCoreService<D extends ABaseDTO,
             }
             return sortItems;
         }
-        return Collections.emptyList();
     }
 
     @SuppressWarnings("unchecked")

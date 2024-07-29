@@ -78,7 +78,7 @@ public class CustomerController {
         response.setRegistrationDate(registrationDate);
         response.setTrackingNumber(trackingNumber);
         response.setTransactionId(transactionId);
-        response.setStatus(ServiceStatusEnum.Successful);
+        response.setServiceStatus(ServiceStatusEnum.Successful);
 
         try {
             CustomerCriteria customerCriteria = new CustomerCriteria();

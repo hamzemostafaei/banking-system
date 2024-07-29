@@ -24,7 +24,7 @@ public abstract class ABaseEdgeRequestValidator<RQ extends ABaseEdgeRequestDTO,
     public boolean validate(RQ request, RP response) {
         assert response != null;
 
-        response.setStatus(ServiceStatusEnum.Successful);
+        response.setServiceStatus(ServiceStatusEnum.Successful);
 
         ErrorDTO error;
         if (request == null) {
