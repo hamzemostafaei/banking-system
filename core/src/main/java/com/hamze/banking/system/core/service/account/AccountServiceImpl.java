@@ -14,6 +14,7 @@ import com.hamze.banking.system.core.api.service.ITransactionStrategy;
 import com.hamze.banking.system.core.service.ABaseCoreService;
 import com.hamze.banking.system.core.service.account.strategy.TransactionStrategyRegistry;
 import com.hamze.banking.system.data.access.entity.AccountEntity;
+import com.hamze.banking.system.data.access.enumeration.AccountStatusEnum;
 import com.hamze.banking.system.data.access.repository.api.IAccountRepository;
 import com.hamze.banking.system.shared.data.base.dto.ErrorDTO;
 import com.hamze.banking.system.shared.data.base.enumeration.ErrorCodeEnum;
@@ -46,7 +47,7 @@ public class AccountServiceImpl extends ABaseCoreService<AccountDTO,
 
         request.setOpenDate(new Date());
         request.setCloseDate(null);
-        request.setStatus(0);
+        request.setStatus(AccountStatusEnum.Active);
         request.setOpenAmount(request.getOpenAmount());
 
         AccountDTO savedAccount = save(request);

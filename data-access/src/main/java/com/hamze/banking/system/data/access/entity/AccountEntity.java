@@ -1,9 +1,7 @@
 package com.hamze.banking.system.data.access.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.hamze.banking.system.data.access.enumeration.AccountStatusEnum;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,8 +33,9 @@ public class AccountEntity extends ABaseEntity {
     @Column(name = "CLOSE_DATE")
     private Date closeDate;
 
+    @Enumerated
     @Column(name = "STATUS")
-    private Integer status;
+    private AccountStatusEnum status;
 
     @Column(name = "OPEN_AMOUNT", precision = 22, scale = 2)
     private BigDecimal openAmount;

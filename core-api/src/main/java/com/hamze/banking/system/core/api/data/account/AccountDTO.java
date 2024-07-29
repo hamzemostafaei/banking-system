@@ -1,6 +1,7 @@
 package com.hamze.banking.system.core.api.data.account;
 
 import com.hamze.banking.system.core.api.data.ABaseDTO;
+import com.hamze.banking.system.data.access.enumeration.AccountStatusEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -17,7 +18,7 @@ public class AccountDTO extends ABaseDTO {
     private String currency;
     private Date openDate;
     private Date closeDate;
-    private Integer status;
+    private AccountStatusEnum status;
     private BigDecimal openAmount;
     private BigDecimal balance;
 }

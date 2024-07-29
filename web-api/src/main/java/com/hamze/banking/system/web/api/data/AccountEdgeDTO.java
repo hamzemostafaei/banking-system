@@ -1,6 +1,7 @@
 package com.hamze.banking.system.web.api.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.hamze.banking.system.data.access.enumeration.AccountStatusEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -30,7 +31,7 @@ public class AccountEdgeDTO {
     private Date closeDate;
 
     @JsonProperty("status")
-    private Integer status;
+    private AccountStatusEnum status;
 
     @JsonProperty("openAmount")
     private BigDecimal openAmount;
