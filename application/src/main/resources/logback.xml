@@ -101,16 +101,6 @@
 <!--        <appender-ref ref="DA_FILE"/>-->
     </logger>
 
-    <logger name="org.springframework.security" additivity="false">
-        <level value="info"/>
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
-    <logger name="org.camunda.bpm.engine.impl.persistence.entity" additivity="false">
-        <level value="off"/>
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
     <logger name="com.hamze.banking.system.transactions.log" additivity="false">
         <level value="info"/>
         <appender-ref ref="STDOUT"/>
