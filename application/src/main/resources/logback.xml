@@ -65,37 +65,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.hamze.banking.system.exposed_service.logging" additivity="false">
-        <level value="debug"/>
-        <appender-ref ref="STDOUT"/>
-<!--        <appender-ref ref="FILE"/>-->
-    </logger>
-
-    <logger name="com.hamze.banking.system.exposed_service.channel" additivity="false">
-        <level value="debug"/>
-        <appender-ref ref="STDOUT"/>
-<!--        <appender-ref ref="CHANNEL_FILE"/>-->
-    </logger>
-
-    <logger name="com.hamze.banking.system.external_service.channel" additivity="false">
-        <level value="debug"/>
-        <appender-ref ref="STDOUT"/>
-<!--        <appender-ref ref="CHANNEL_FILE"/>-->
-    </logger>
-
-    <logger name="com.hamze.banking.system.service.external" additivity="false">
-        <level value="debug"/>
-        <appender-ref ref="STDOUT"/>
-<!--        <appender-ref ref="FILE"/>-->
-    </logger>
-
     <logger name="com.hamze" additivity="false">
-        <level value="info"/>
-        <appender-ref ref="STDOUT"/>
-<!--        <appender-ref ref="FILE"/>-->
-    </logger>
-
-    <logger name="io.lettuce.core" additivity="false">
         <level value="info"/>
         <appender-ref ref="STDOUT"/>
 <!--        <appender-ref ref="FILE"/>-->
@@ -103,12 +73,6 @@
 
     <logger name="org.springframework.web" additivity="false">
         <level value="info"/>
-        <appender-ref ref="STDOUT"/>
-<!--        <appender-ref ref="FILE"/>-->
-    </logger>
-
-    <logger name="com.hamze.banking.system.exposed_service.controller.ManagementController" additivity="false">
-        <level value="debug"/>
         <appender-ref ref="STDOUT"/>
 <!--        <appender-ref ref="FILE"/>-->
     </logger>
@@ -136,13 +100,6 @@
         <appender-ref ref="STDOUT"/>
 <!--        <appender-ref ref="DA_FILE"/>-->
     </logger>
-
-    <logger name="com.hamze.banking.system.exposed_service.controller.GlobalControllerExceptionHandler" additivity="false">
-        <level value="error"/>
-        <appender-ref ref="STDOUT"/>
-<!--        <appender-ref ref="FILE"/>-->
-    </logger>
-
 
     <logger name="org.springframework.security" additivity="false">
         <level value="info"/>
