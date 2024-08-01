@@ -48,66 +48,8 @@
         </dependency>
     </dependencies>
 
-    <!--<build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <image>
-                        <name>${project.groupId}:${project.version}</name>
-                    </image>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>build-image</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>-->
-
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
-                <configuration>
-                    <includes>
-                        <include>**/*Test.java</include>
-                        <include>**/*Tests.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.12</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -170,7 +112,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${env.LOCAL_RELEASE_BASE_PATH}/banking_system/${project.name}</outputDirectory>
+                            <outputDirectory>/opt/banking-system/application.lib</outputDirectory>
                             <includeGroupIds>${project.groupId}</includeGroupIds>
                         </configuration>
                     </execution>
@@ -181,7 +123,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${env.LOCAL_RELEASE_BASE_PATH}/banking_system/lib</outputDirectory>
+                            <outputDirectory>/opt/banking-system/lib</outputDirectory>
                             <excludeGroupIds>${project.groupId}</excludeGroupIds>
                         </configuration>
                     </execution>
@@ -192,7 +134,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
-                    <outputDirectory>${env.LOCAL_RELEASE_BASE_PATH}/banking_system/${project.name}</outputDirectory>
+                    <outputDirectory>/opt/banking-system/application</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>
