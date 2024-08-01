@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
         <relativePath/>
     </parent>
 
@@ -36,6 +36,7 @@
         <module>core</module>
         <module>core-api</module>
         <module>security</module>
+        <module>integration-test</module>
     </modules>
 
     <dependencyManagement>
@@ -156,6 +157,11 @@
             <!-- sub-systems -->
             <dependency>
                 <groupId>com.hamze.banking.system</groupId>
+                <artifactId>application</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hamze.banking.system</groupId>
                 <artifactId>shared</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -182,6 +188,11 @@
             <dependency>
                 <groupId>com.hamze.banking.system</groupId>
                 <artifactId>core-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hamze.banking.system</groupId>
+                <artifactId>integration-test</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- sub-systems -->

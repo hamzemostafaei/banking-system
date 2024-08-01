@@ -7,6 +7,7 @@ import com.hamze.banking.system.core.api.service.ICustomerService;
 import com.hamze.banking.system.shared.data.base.dto.ErrorDTO;
 import com.hamze.banking.system.shared.data.base.enumeration.ErrorCodeEnum;
 import com.hamze.banking.system.shared.data.base.enumeration.ServiceStatusEnum;
+import com.hamze.banking.system.shared.util.SnowFlakeUniqueIDGenerator;
 import com.hamze.banking.system.web.api.data.CreateCustomerEdgeRequestDTO;
 import com.hamze.banking.system.web.api.data.CreateCustomerEdgeResponseDTO;
 import com.hamze.banking.system.web.api.data.CustomerEdgeDTO;
@@ -15,19 +16,22 @@ import com.hamze.banking.system.web.api.mapper.ICustomerDTOEdgeResponseMapper;
 import com.hamze.banking.system.web.api.validation.ICreateCustomerEdgeRequestValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/customer")
 public class CustomerController {
 
-    private static final Logger log = LoggerFactory.getLogger(CustomerController.class);
+    @Value("${com.hamze.banking.system.node-id}")
+    private Long nodeId;
+
     private final ICustomerService customerService;
     private final ICreateCustomerEdgeRequestValidator createCustomerEdgeRequestValidator;
     private final ICustomerDTOEdgeResponseMapper customerDTOEdgeResponseMapper;
@@ -67,17 +71,14 @@ public class CustomerController {
     }
 
     @GetMapping("/v1/{customerNumber}")
-    public ResponseEntity<GetCustomerEdgeResponseDTO> getCustomer(@PathVariable("customerNumber") String customerNumber, HttpServletRequest request) {
+    public ResponseEntity<GetCustomerEdgeResponseDTO> getCustomer(@PathVariable("customerNumber") Integer customerNumber, HttpServletRequest request) {
 
         GetCustomerEdgeResponseDTO response = new GetCustomerEdgeResponseDTO();
 
-        //TODO
-        String trackingNumber = (String) request.getAttribute("trackingNumber");
-        String transactionId = (String) request.getAttribute("transactionId");
-        Date registrationDate = (Date) request.getAttribute("registrationDate");
-        response.setRegistrationDate(registrationDate);
-        response.setTrackingNumber(trackingNumber);
-        response.setTransactionId(transactionId);
+        //TODO: should be set by controller interceptor or filter chain
+        response.setRegistrationDate(new Date());
+        response.setTrackingNumber(Long.toString(SnowFlakeUniqueIDGenerator.generateNextId(nodeId)));
+        response.setTransactionId(Long.toString(SnowFlakeUniqueIDGenerator.generateNextId(nodeId)));
         response.setServiceStatus(ServiceStatusEnum.Successful);
 
         try {

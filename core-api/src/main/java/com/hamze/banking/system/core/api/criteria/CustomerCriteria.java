@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class CustomerCriteria extends ABaseSearchCriteria {
 
     @Condition(type = ConditionTypeEnum.Equal, fieldName = "customerNumber")
-    private String customerNumberEquals;
+    private Integer customerNumberEquals;
 
     @Condition(type = ConditionTypeEnum.Equal, fieldName = "nationalId")
     private String nationalIdEquals;
