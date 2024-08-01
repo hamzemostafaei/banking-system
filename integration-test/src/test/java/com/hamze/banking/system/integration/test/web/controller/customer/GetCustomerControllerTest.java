@@ -1,4 +1,4 @@
-package com.hamze.banking.system.integration.test.web.controller;
+package com.hamze.banking.system.integration.test.web.controller.customer;
 
 import com.hamze.banking.system.core.api.criteria.CustomerCriteria;
 import com.hamze.banking.system.core.api.data.CustomerDTO;
@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-public class CustomerControllerTest extends ABaseIntegrationTest {
+public class GetCustomerControllerTest extends ABaseIntegrationTest {
 
     private static final Integer CUSTOMER_NUMBER = 12345;
 
@@ -33,11 +33,11 @@ public class CustomerControllerTest extends ABaseIntegrationTest {
 
     @BeforeEach
     public void setup() {
-        setupMockCustomerData(CUSTOMER_NUMBER);
+        setupMockCustomerData();
     }
 
     @Test
-    @DisplayName("Getting customer information")
+    @DisplayName("Test getting customer information")
     public void testGetCustomer() throws Exception {
 
         mockMvc.perform(get("/customer/v1/{customerNumber}", CUSTOMER_NUMBER)
@@ -53,18 +53,18 @@ public class CustomerControllerTest extends ABaseIntegrationTest {
                 .andExpect(jsonPath("$.data.nationalId").value("3319977441"));
     }
 
-    private void setupMockCustomerData(Integer customerNumber) {
+    private void setupMockCustomerData() {
         CustomerCriteria customerCriteria = new CustomerCriteria();
-        customerCriteria.setCustomerNumberEquals(customerNumber);
+        customerCriteria.setCustomerNumberEquals(GetCustomerControllerTest.CUSTOMER_NUMBER);
 
-        CustomerDTO mockCustomer = createMockCustomer(customerNumber);
+        CustomerDTO mockCustomer = createMockCustomer();
 
         given(customerService.getSingleResult(customerCriteria)).willReturn(mockCustomer);
     }
 
-    private CustomerDTO createMockCustomer(Integer customerNumber) {
+    private CustomerDTO createMockCustomer() {
         CustomerDTO customer = new CustomerDTO();
-        customer.setCustomerNumber(customerNumber);
+        customer.setCustomerNumber(GetCustomerControllerTest.CUSTOMER_NUMBER);
         customer.setFirstName("حمزه");
         customer.setLastName("مصطفیء");
         customer.setNationalId("3319977441");

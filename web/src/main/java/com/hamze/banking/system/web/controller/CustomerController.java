@@ -71,7 +71,7 @@ public class CustomerController {
     }
 
     @GetMapping("/v1/{customerNumber}")
-    public ResponseEntity<GetCustomerEdgeResponseDTO> getCustomer(@PathVariable("customerNumber") Integer customerNumber, HttpServletRequest request) {
+    public ResponseEntity<GetCustomerEdgeResponseDTO> getCustomer(@PathVariable("customerNumber") Integer customerNumber) {
 
         GetCustomerEdgeResponseDTO response = new GetCustomerEdgeResponseDTO();
 
