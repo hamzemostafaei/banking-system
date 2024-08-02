@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://www.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -82,7 +82,18 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <!--<image>
+                        <name>${project.groupId}:${project.version}</name>
+                    </image>-->
                 </configuration>
+                <!--<executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build-image</goal>
+                        </goals>
+                    </execution>
+                </executions>-->
             </plugin>
             <plugin>
                 <groupId>com.mysema.maven</groupId>
@@ -112,7 +123,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>/opt/banking-system/application.lib</outputDirectory>
+                            <outputDirectory>/opt/banking-system/release/application.lib</outputDirectory>
                             <includeGroupIds>${project.groupId}</includeGroupIds>
                         </configuration>
                     </execution>
@@ -123,7 +134,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>/opt/banking-system/lib</outputDirectory>
+                            <outputDirectory>/opt/banking-system/release/lib</outputDirectory>
                             <excludeGroupIds>${project.groupId}</excludeGroupIds>
                         </configuration>
                     </execution>
@@ -134,7 +145,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
-                    <outputDirectory>/opt/banking-system/application</outputDirectory>
+                    <outputDirectory>/opt/banking-system/release/application</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>

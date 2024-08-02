@@ -1,0 +1,62 @@
+version: '3.8'
+services:
+  app1:
+    image: banking-system-app
+    container_name: node-1
+    build: .
+    ports:
+      - "8585:8585"
+    volumes:
+      - /opt/banking-system/docker/config/application.properties:/config/application.properties
+      - /opt/banking-system/docker/config/logback.xml:/config/logback.xml
+      - /opt/banking-system/docker/log/:/log/
+    hostname: banking-system-app-node1
+    networks:
+      - development
+    environment:
+      - SPRING_CONFIG_LOCATION=/config/application.properties
+      - LOGGING_CONFIG=/config/logback.xml
+      - com.hamze.banking.system.node-id=1
+      - node-id=1
+
+  app2:
+    image: banking-system-app
+    container_name: node-2
+    build: .
+    ports:
+      - "8586:8585"
+    volumes:
+      - /opt/banking-system/docker/config/application.properties:/config/application.properties
+      - /opt/banking-system/docker/config/logback.xml:/config/logback.xml
+      - /opt/banking-system/docker/log/:/log/
+    hostname: banking-system-app-node2
+    networks:
+      - development
+    environment:
+      - SPRING_CONFIG_LOCATION=/config/application.properties
+      - LOGGING_CONFIG=/config/logback.xml
+      - com.hamze.banking.system.node-id=2
+      - node-id=2
+
+  app3:
+    image: banking-system-app
+    container_name: node-3
+    build: .
+    ports:
+      - "8587:8585"
+    volumes:
+      - /opt/banking-system/docker/config/application.properties:/config/application.properties
+      - /opt/banking-system/docker/config/logback.xml:/config/logback.xml
+      - /opt/banking-system/docker/log/:/log/
+    hostname: banking-system-app-node3
+    networks:
+      - development
+    environment:
+      - SPRING_CONFIG_LOCATION=/config/application.properties
+      - LOGGING_CONFIG=/config/logback.xml
+      - com.hamze.banking.system.node-id=3
+      - node-id=3
+
+networks:
+  development:
+    external: true
