@@ -16,7 +16,6 @@ services:
     environment:
       - SPRING_CONFIG_LOCATION=/config/application.properties
       - LOGGING_CONFIG=/config/logback.xml
-      - com.hamze.banking.system.node-id=1
       - node-id=1
 
   app2:
@@ -35,7 +34,6 @@ services:
     environment:
       - SPRING_CONFIG_LOCATION=/config/application.properties
       - LOGGING_CONFIG=/config/logback.xml
-      - com.hamze.banking.system.node-id=2
       - node-id=2
 
   app3:
@@ -54,7 +52,6 @@ services:
     environment:
       - SPRING_CONFIG_LOCATION=/config/application.properties
       - LOGGING_CONFIG=/config/logback.xml
-      - com.hamze.banking.system.node-id=3
       - node-id=3
 
 networks:
