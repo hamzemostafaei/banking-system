@@ -31,12 +31,12 @@
         </encoder>
     </appender>
 
-    <appender name="CHANNEL_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>./log/channel/banking_system-channel1.log</file>
+    <appender name="WEB_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>./log/web/banking_system-web1.log</file>
         <rollingPolicy
                 class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>
-                ./log/channel/archived/banking_system-channel1.%d{yyyy-MM-dd}.%i.log.zip
+                ./log/web/archived/banking_system-web1.%d{yyyy-MM-dd}.%i.log.zip
             </fileNamePattern>
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>20</maxHistory>
