@@ -7,7 +7,6 @@ import com.hamze.banking.system.core.api.service.ICustomerService;
 import com.hamze.banking.system.shared.data.base.dto.ErrorDTO;
 import com.hamze.banking.system.shared.data.base.enumeration.ErrorCodeEnum;
 import com.hamze.banking.system.shared.data.base.enumeration.ServiceStatusEnum;
-import com.hamze.banking.system.shared.util.SnowFlakeUniqueIDGenerator;
 import com.hamze.banking.system.web.api.data.CreateCustomerEdgeRequestDTO;
 import com.hamze.banking.system.web.api.data.CreateCustomerEdgeResponseDTO;
 import com.hamze.banking.system.web.api.data.CustomerEdgeDTO;
@@ -17,7 +16,6 @@ import com.hamze.banking.system.web.api.validation.ICreateCustomerEdgeRequestVal
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +27,7 @@ import java.util.Date;
 @RequestMapping("/customer")
 public class CustomerController {
 
-    @Value("${com.hamze.banking.system.node-id}")
-    private Long nodeId;
+    private final HttpServletRequest httpServletRequest;
 
     private final ICustomerService customerService;
     private final ICreateCustomerEdgeRequestValidator createCustomerEdgeRequestValidator;
@@ -75,10 +72,9 @@ public class CustomerController {
 
         GetCustomerEdgeResponseDTO response = new GetCustomerEdgeResponseDTO();
 
-        //TODO: should be set by controller interceptor or filter chain
-        response.setRegistrationDate(new Date());
-        response.setTrackingNumber(Long.toString(SnowFlakeUniqueIDGenerator.generateNextId(nodeId)));
-        response.setTransactionId(Long.toString(SnowFlakeUniqueIDGenerator.generateNextId(nodeId)));
+        response.setRegistrationDate((Date) httpServletRequest.getAttribute("registrationDate"));
+        response.setTrackingNumber(String.valueOf(httpServletRequest.getAttribute("trackingNumber")));
+        response.setTransactionId(String.valueOf(httpServletRequest.getAttribute("transactionId")));
         response.setServiceStatus(ServiceStatusEnum.Successful);
 
         try {

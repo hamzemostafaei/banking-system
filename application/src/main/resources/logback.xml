@@ -9,7 +9,7 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>[%X{USR-ID}]-${CONSOLE_LOG_PATTERN}</pattern>
+            <pattern>[%X{RQST-ID}]-${CONSOLE_LOG_PATTERN}</pattern>
             <charset>${CONSOLE_LOG_CHARSET}</charset>
         </encoder>
     </appender>
@@ -26,24 +26,7 @@
             <totalSizeCap>2000MB</totalSizeCap>
         </rollingPolicy>
         <encoder>
-            <pattern>[%X{USR-ID}]-${FILE_LOG_PATTERN}</pattern>
-            <charset>${FILE_LOG_CHARSET}</charset>
-        </encoder>
-    </appender>
-
-    <appender name="WEB_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>./log/web/banking_system-web1.log</file>
-        <rollingPolicy
-                class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>
-                ./log/web/archived/banking_system-web1.%d{yyyy-MM-dd}.%i.log.zip
-            </fileNamePattern>
-            <maxFileSize>100MB</maxFileSize>
-            <maxHistory>20</maxHistory>
-            <totalSizeCap>2000MB</totalSizeCap>
-        </rollingPolicy>
-        <encoder>
-            <pattern>[%X{traceId:-}]-[%X{spanId:-}]-[%X{USR-ID}]-${FILE_LOG_PATTERN}</pattern>
+            <pattern>[%X{RQST-ID}]-${FILE_LOG_PATTERN}</pattern>
             <charset>${FILE_LOG_CHARSET}</charset>
         </encoder>
     </appender>
@@ -72,7 +55,7 @@
     </logger>
 
     <logger name="org.springframework.web" additivity="false">
-        <level value="info"/>
+        <level value="debug"/>
         <appender-ref ref="STDOUT"/>
 <!--        <appender-ref ref="FILE"/>-->
     </logger>
@@ -107,7 +90,7 @@
     </logger>
 
     <logger name="com.zaxxer" additivity="false">
-        <level value="debug"/>
+        <level value="info"/>
         <appender-ref ref="STDOUT"/>
     </logger>
 
