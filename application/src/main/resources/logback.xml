@@ -9,7 +9,7 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>[%X{NODE-ID}]-[%X{TRACKING-NUMBER}]-${CONSOLE_LOG_PATTERN}</pattern>
+            <pattern>[%X{NODE-ID}]-[%X{TRACKING-ID}]-${CONSOLE_LOG_PATTERN}</pattern>
             <charset>${CONSOLE_LOG_CHARSET}</charset>
         </encoder>
     </appender>
@@ -26,7 +26,7 @@
             <totalSizeCap>2000MB</totalSizeCap>
         </rollingPolicy>
         <encoder>
-            <pattern>[%X{NODE-ID}]-[%X{TRACKING-NUMBER}]-${FILE_LOG_PATTERN}</pattern>
+            <pattern>[%X{NODE-ID}]-[%X{TRACKING-ID}]-${FILE_LOG_PATTERN}</pattern>
             <charset>${FILE_LOG_CHARSET}</charset>
         </encoder>
     </appender>
@@ -43,7 +43,7 @@
             <totalSizeCap>2000MB</totalSizeCap>
         </rollingPolicy>
         <encoder>
-            <pattern>[%X{traceId:-}]-[%X{spanId:-}]-[%X{NODE-ID}]-[%X{TRACKING-NUMBER}]-${FILE_LOG_PATTERN}</pattern>
+            <pattern>[%X{traceId:-}]-[%X{spanId:-}]-[%X{NODE-ID}]-[%X{TRACKING-ID}]-${FILE_LOG_PATTERN}</pattern>
             <charset>${FILE_LOG_CHARSET}</charset>
         </encoder>
     </appender>

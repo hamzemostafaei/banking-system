@@ -73,7 +73,7 @@ public class CustomerController {
         GetCustomerEdgeResponseDTO response = new GetCustomerEdgeResponseDTO();
 
         response.setRegistrationDate((Date) httpServletRequest.getAttribute("registrationDate"));
-        response.setTrackingNumber(String.valueOf(httpServletRequest.getAttribute("trackingNumber")));
+        response.setTrackingId(String.valueOf(httpServletRequest.getAttribute("trackingId")));
         response.setTransactionId(String.valueOf(httpServletRequest.getAttribute("transactionId")));
         response.setServiceStatus(ServiceStatusEnum.Successful);
 

@@ -49,21 +49,21 @@ public class CreateCustomerControllerTest extends ABaseIntegrationTest {
         validRequest.setFirstName("حمزه");
         validRequest.setLastName("مصطفیء");
         validRequest.setNationalId("3319977441");
-        validRequest.setTrackingNumber(UUID.randomUUID().toString());
+        validRequest.setTrackingId(UUID.randomUUID().toString());
     }
 
     @Test
     @DisplayName("Test creating a customer successfully")
     public void testCreateCustomerSuccess() throws Exception {
 
-        this.validRequest.setTrackingNumber(UUID.randomUUID().toString());
+        this.validRequest.setTrackingId(UUID.randomUUID().toString());
 
         Map<String, Object> customerCreationRequestMap = new HashMap<>();
         customerCreationRequestMap.put("customerNumber", validRequest.getCustomerNumber());
         customerCreationRequestMap.put("firstName", validRequest.getFirstName());
         customerCreationRequestMap.put("lastName", validRequest.getLastName());
         customerCreationRequestMap.put("nationalId", validRequest.getNationalId());
-        customerCreationRequestMap.put("trackingNumber", validRequest.getTrackingNumber());
+        customerCreationRequestMap.put("trackingId", validRequest.getTrackingId());
         String jsonString = JsonSerializationUtil.objectToJsonString(customerCreationRequestMap);
 
         // Mock the service to return a valid response
@@ -78,7 +78,7 @@ public class CreateCustomerControllerTest extends ABaseIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.trackingNumber").value(validRequest.getTrackingNumber()))
+                .andExpect(jsonPath("$.trackingId").value(validRequest.getTrackingId()))
                 .andExpect(jsonPath("$.transactionId").exists())
                 .andExpect(jsonPath("$.registrationDate").exists())
                 .andExpect(jsonPath("$.serviceStatus").value(ServiceStatusEnum.Successful.getStatusCode()))

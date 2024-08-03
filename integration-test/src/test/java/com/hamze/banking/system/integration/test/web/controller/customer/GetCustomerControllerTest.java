@@ -43,7 +43,7 @@ public class GetCustomerControllerTest extends ABaseIntegrationTest {
         mockMvc.perform(get("/customer/v1/{customerNumber}", CUSTOMER_NUMBER)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.trackingNumber").exists())
+                .andExpect(jsonPath("$.trackingId").exists())
                 .andExpect(jsonPath("$.transactionId").exists())
                 .andExpect(jsonPath("$.registrationDate").exists())
                 .andExpect(jsonPath("$.serviceStatus").value(ServiceStatusEnum.Successful.getStatusCode()))

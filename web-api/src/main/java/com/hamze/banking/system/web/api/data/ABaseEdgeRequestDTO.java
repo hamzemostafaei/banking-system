@@ -8,8 +8,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public abstract class ABaseEdgeRequestDTO {
 
-    @JsonProperty("trackingNumber")
-    protected String trackingNumber;
+    @JsonProperty("trackingId")
+    protected String trackingId;
 
     @JsonProperty("transactionId")
     protected String transactionId;

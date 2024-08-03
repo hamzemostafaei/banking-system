@@ -59,7 +59,7 @@ public class ReflectionUtil {
         return fieldNames;
     }
 
-    private static synchronized <O, I> List<Field> cacheFields(Class<?> clazz) {
+    private static synchronized List<Field> cacheFields(Class<?> clazz) {
         List<Field> totalFields;
         if (!CLASS_FIELD_MAP.containsKey(clazz)) {
             totalFields = new ArrayList<>();
@@ -117,7 +117,7 @@ public class ReflectionUtil {
         return fields;
     }
 
-    public static Object getValue(Class<?> clazz, String fieldName,Object object) {
+    public static Object getValue(Class<?> clazz, String fieldName, Object object) {
 
         if (object == null || fieldName == null || clazz == null) {
             return null;

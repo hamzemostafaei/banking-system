@@ -9,18 +9,18 @@ import java.util.regex.Pattern;
 @SuppressWarnings("unused")
 public final class ValidationUtil {
 
-    private static final Pattern TRACKING_NUMBER_PATTERN = Pattern.compile("^[\\w\\-:.]{8,64}$");
+    private static final Pattern TRACKING_ID_PATTERN = Pattern.compile("^[\\w\\-:.]{8,64}$");
     private static final Pattern ACCOUNT_NUMBER_PATTERN = Pattern.compile("^[0-9]{1,4}\\.[0-9]{1,4}\\.[1-9][0-9]{0,7}\\.[0-9]{1,3}$");
     private static final Pattern NATIONAL_CODE_PATTERN = Pattern.compile("^\\d{10}$");
 
-    public static ErrorDTO validateTrackingNumber(String trackingNumber) {
+    public static ErrorDTO validateTrackingId(String trackingId) {
 
-        if (trackingNumber == null) {
-            return new ErrorDTO(ErrorCodeEnum.MandatoryField, "MandatoryFieldNotSet", "trackingNumber");
+        if (trackingId == null) {
+            return new ErrorDTO(ErrorCodeEnum.MandatoryField, "MandatoryFieldNotSet", "trackingId");
         }
 
-        if (!TRACKING_NUMBER_PATTERN.matcher(trackingNumber).matches()) {
-            return new ErrorDTO(ErrorCodeEnum.DataFormatMismatch, "DataFormatMismatch", "trackingNumber");
+        if (!TRACKING_ID_PATTERN.matcher(trackingId).matches()) {
+            return new ErrorDTO(ErrorCodeEnum.DataFormatMismatch, "DataFormatMismatch", "trackingId");
         }
 
         return null;

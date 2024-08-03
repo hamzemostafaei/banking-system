@@ -34,10 +34,10 @@ public abstract class ABaseEdgeRequestValidator<RQ extends ABaseEdgeRequestDTO,
             return false;
         }
 
-        handleValidation(ValidationUtil.validateTrackingNumber(request.getTrackingNumber()), response);
+        handleValidation(ValidationUtil.validateTrackingId(request.getTrackingId()), response);
 
         response.setRegistrationDate(new Date());
-        response.setTrackingNumber(request.getTrackingNumber());
+        response.setTrackingId(request.getTrackingId());
         if (request.getTransactionId() != null) {
             response.setTransactionId(request.getTransactionId());
         } else {
